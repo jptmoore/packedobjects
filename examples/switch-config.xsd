@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
+
+  <xs:simpleType name="snmp-version">
+    <xs:restriction base="enumerated">
+      <xs:enumeration value="3" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="encryption">
+    <xs:restriction base="enumerated">
+      <xs:enumeration value="SHA" />
+      <xs:enumeration value="AES" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="security-level">
+    <xs:restriction base="enumerated">
+      <xs:enumeration value="authPriv" />
+    </xs:restriction>
+  </xs:simpleType>  
+  
+  <xs:complexType name="switchMaxOccurs">
+    <xs:sequence>
+      <xs:element name="id" type="integer"/>
+      <xs:element name="name" type="string"/>
+      <xs:element name="ip" type="ipv4-address"/>
+      <xs:element name="dashboard" type="string"/>
+      <xs:element name="snmpVersion" type="snmp-version"/>
+      <xs:element name="snmpV3User" type="string" minOccurs="0"/>
+      <xs:element name="snmpV3Passphrase" type="string" minOccurs="0"/>
+      <xs:element name="snmpV3AuthProtocol" type="encryption" minOccurs="0"/>
+      <xs:element name="snmpV3PrivProtocol" type="encryption" minOccurs="0"/>
+      <xs:element name="snmpV3PrivPassphrase" type="string" minOccurs="0"/>
+      <xs:element name="snmpV3SecLevel" type="security-level" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="switchestypes">
+    <xs:sequence>
+      <xs:element name="switch" type="switchMaxOccurs" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="switches" type="switchestypes"/>
+
+</xs:schema>

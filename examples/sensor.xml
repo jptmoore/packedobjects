@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<log>
+  <sensortype>
+    <accelerometer>
+      <data>
+	<device>OM</device>
+	<rate>60</rate>
+	<noise>2</noise>
+	<covariance>1231</covariance>
+	<axis>
+	  <x>123</x>
+	  <y>452</y>
+	  <z>50</z>
+	</axis>
+	<time>
+	  <posix>1283</posix>
+	</time>
+      </data>
+      <data>
+	<device>OM</device>
+	<rate>60</rate>
+	<noise>2</noise>
+	<covariance>1231</covariance>
+	<axis>
+	  <x>123</x>
+	  <y>452</y>
+	  <z>50</z>
+	</axis>
+	<time>
+	  <posix>5372</posix>
+	</time>
+      </data>
+    </accelerometer>
+  </sensortype>
+</log>

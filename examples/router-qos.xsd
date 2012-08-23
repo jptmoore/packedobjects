@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
+
+  <!-- add more values when known -->
+  <xs:simpleType name="method-enum">
+    <xs:restriction base="enumerated">
+      <xs:enumeration value="walk" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- add more values when known -->
+  <xs:simpleType name="source-enum">
+    <xs:restriction base="enumerated">
+      <xs:enumeration value="index" />
+      <xs:enumeration value="value" />      
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- add more values when known -->
+  <xs:simpleType name="direction-enum">
+    <xs:restriction base="enumerated">
+      <xs:enumeration value="input" />
+      <xs:enumeration value="output" />      
+    </xs:restriction>
+  </xs:simpleType>  
+  
+  <xs:complexType name="fieldstype">
+    <xs:sequence>
+      <xs:element name="name" type="string" minOccurs="0"/>
+      <xs:element name="method" type="method-enum" minOccurs="0"/>
+      <xs:element name="source"  type="source-enum" minOccurs="0"/>
+      <xs:element name="direction" type="direction-enum" minOccurs="0"/>
+      <xs:element name="oid"  type="string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="interfacetype">
+    <xs:sequence>
+      <xs:element name="fields">
+	<xs:complexType>
+	  <xs:sequence>
+	    <xs:element name="AlcatelIndex"  type="fieldstype" />
+	    <xs:element name="ifName" type="fieldstype"/>
+	    <xs:element name="ifFwdOcts" type="fieldstype"/>
+	    <xs:element name="ifDroOcts" type="fieldstype"/>
+	  </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:element name="interface" type="interfacetype"/>
+
+</xs:schema>

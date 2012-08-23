@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
+  
+  <xs:complexType name="PurchaseOrderType">
+    <xs:sequence>
+      <xs:element name="shipTo" type="USAddress"/>
+      <xs:element name="billTo" type="USAddress"/>
+      <xs:element name="items"  type="Items"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="USAddress">
+    <xs:sequence>
+      <xs:element name="name"   type="string"/>
+      <xs:element name="street" type="string"/>
+      <xs:element name="city"   type="string"/>
+      <xs:element name="state"  type="string"/>
+      <xs:element name="zip"    type="numeric-string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="maxInt100">
+    <xs:restriction base="integer">
+      <xs:maxInclusive value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Date">
+    <xs:restriction base="string">
+      <xs:length value="10" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="Items">
+    <xs:sequence>
+      <xs:element name="item" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="productName" type="string" />
+            <xs:element name="quantity" type="maxInt100" />
+            <xs:element name="USPrice"  type="currency"/>
+            <xs:element name="comment" type="string" minOccurs="0" />
+            <xs:element name="shipDate" type="Date" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:element name="purchaseOrder" type="PurchaseOrderType"/>
+  
+</xs:schema>

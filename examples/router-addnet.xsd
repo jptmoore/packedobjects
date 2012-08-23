@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
+
+  <xs:complexType name="filterSettype">
+    <xs:sequence>
+      <xs:element name="filterList" minOccurs="0" maxOccurs="unbounded">
+	<xs:complexType>
+	  <xs:sequence>
+	    <xs:element name="operand1" type="string" />
+	    <xs:element name="operator" type="string" />
+	    <xs:element name="part" type="string" />
+	  </xs:sequence>
+	</xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Templatetype">
+    <xs:sequence>
+      <xs:element name="type">
+	<xs:simpleType>                                         
+	  <xs:restriction base="string">                        
+            <xs:minLength value="1" />                          
+            <xs:maxLength value="64" />                         
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>   
+      <xs:element name="filterSet" type="filterSettype"/>
+      <xs:element name="boolExp"   type="integer"/>
+      <xs:element name="index"  type="integer"/>
+      <xs:element name="enabled" type="boolean"/>  
+      <xs:element name="action" type="integer"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:element name="Template" type="Templatetype"/>
+  
+</xs:schema>

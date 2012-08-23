@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
+  
+  <xs:complexType name="EthernetInformationtype">
+    <xs:sequence>
+      <xs:element name="TxExcessiveCollisions"   type="integer"/>
+      <xs:element name="TxFrames"   type="integer"/>
+      <xs:element name="TxBroadcasts"   type="integer"/>
+      <xs:element name="TxMulticasts"   type="integer"/>
+      <xs:element name="TxCollisions"   type="integer"/>
+      <xs:element name="TxDeferredAbort"   type="integer"/>
+      <xs:element name="RxOverruns"   type="integer"/>
+      <xs:element name="RxLongCRC"   type="integer"/>
+      <xs:element name="RxFrames"   type="integer"/>
+      <xs:element name="RxCRCErrors"   type="integer"/>
+      <xs:element name="RxBadPreamble"   type="integer"/>
+      <xs:element name="RxRunt"   type="integer"/>
+      <xs:element name="RxMulticasts"   type="integer"/>
+      <xs:element name="RxBroadcasts"   type="integer"/>
+      <xs:element name="RxShorts"   type="integer"/>
+      <xs:element name="RxLongs"   type="integer"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="EthernetInformation" type="EthernetInformationtype"/>
+</xs:schema>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE EthernetInformation SYSTEM "../iptel-ethinfo.dtd">
+<EthernetInformation>
+   <TxExcessiveCollisions>0</TxExcessiveCollisions>
+   <TxFrames>2732807</TxFrames>
+   <TxBroadcasts>7944</TxBroadcasts>
+   <TxMulticasts>169287</TxMulticasts>
+   <TxCollisions>0</TxCollisions>
+   <TxDeferredAbort>0</TxDeferredAbort>
+   <RxOverruns>0</RxOverruns>
+   <RxLongCRC>0</RxLongCRC>
+   <RxFrames>3837371</RxFrames>
+   <RxCRCErrors>0</RxCRCErrors>
+   <RxBadPreamble>0</RxBadPreamble>
+   <RxRunt>0</RxRunt>
+   <RxMulticasts>151066</RxMulticasts>
+   <RxBroadcasts>1424370</RxBroadcasts>
+   <RxShorts>0</RxShorts>
+   <RxLongs>0</RxLongs>
+</EthernetInformation>

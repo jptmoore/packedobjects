@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
+
+  <xs:complexType name="DeviceInformationType">
+    <xs:sequence>
+      <xs:element name="MACAddress">
+	<xs:simpleType>                                         
+          <xs:restriction base="hex-string">                        
+            <xs:minLength value="1" />                          
+            <xs:maxLength value="64" />                         
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>                  
+      <xs:element name="HostName">
+	<xs:simpleType>                                         
+          <xs:restriction base="string">                        
+            <xs:minLength value="1" />                          
+            <xs:maxLength value="64" />                         
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>                  
+      <xs:element name="phoneDN"  type="integer"/>
+      <xs:element name="appLoadID">
+	<xs:simpleType>                                         
+          <xs:restriction base="string">                        
+            <xs:minLength value="1" />                          
+            <xs:maxLength value="64" />                         
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>     
+      <xs:element name="bootLoadID">
+	<xs:simpleType>                                         
+          <xs:restriction base="string">                        
+            <xs:minLength value="1" />                          
+            <xs:maxLength value="64" />                         
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>  	
+      <xs:element name="versionID" type="decimal"/>
+      <xs:element name="DSPLoadID"  type="decimal"/>
+      <xs:element name="addonModule1" type="null"/>
+      <xs:element name="addonModule2"  type="null"/>
+      <xs:element name="hardwareRevision" type="decimal"/>
+      <xs:element name="serialNumber"  type="string"/>
+      <xs:element name="modelNumber"  type="string"/>
+      <xs:element name="Codec"  type="string"/>
+      <xs:element name="Amps"  type="string"/>
+      <xs:element name="C3PORevision"  type="integer"/>
+      <xs:element name="MessageWaiting"  type="string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="DeviceInformation" type="DeviceInformationType"/>
+
+</xs:schema>

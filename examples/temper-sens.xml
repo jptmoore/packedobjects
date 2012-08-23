@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<Temper>
+  <Binary>
+    <R1>
+      <Name>Binary 1</Name>
+      <Number>Input1</Number>
+      <Value>0</Value>
+      <Alarm>No</Alarm>
+      <State>0</State>
+    </R1>
+    <R2>
+      <Name>Binary 2</Name>
+      <Number>Input2</Number>
+      <Value>0</Value>
+      <Alarm>No</Alarm>
+      <State>0</State>
+    </R2>
+    <R3>
+      <Name>Binary 3</Name>
+      <Number>Input3</Number>
+      <Value>0</Value>
+      <Alarm>No</Alarm>
+      <State>0</State>
+    </R3>
+  </Binary>
+  <Sensors>
+    <SensorTable>
+      <Entry>
+	<Name>Sensor</Name>
+	<Type>RS485</Type>
+	<ID>81</ID>
+	<Temper>23.5</Temper>
+	<TempRange>-10 .. 40</TempRange>
+	<Alarm>No</Alarm>
+	<State>0</State>
+      </Entry>
+      <Entry>
+	<Name>Sensor</Name>
+	<Type>1-Wire</Type>
+	<ID>7936</ID>
+	<Temper>23.3</Temper>
+	<TempRange>-10 .. 40</TempRange>
+	<Alarm>No</Alarm>
+	<State>0</State>
+      </Entry>
+      <Entry>
+	<Name>Sensor</Name>
+	<Type>1-Wire</Type>
+	<ID>50176</ID>
+	<Temper>23.4</Temper>
+	<TempRange>-10 .. 40</TempRange>
+	<Alarm>No</Alarm>
+	<State>0</State>
+      </Entry>
+    </SensorTable>
+  </Sensors>
+  <TemperRange>
+    <min>19</min>
+    <max>27</max>
+  </TemperRange>
+  <Agent>
+    <version>1.8.3</version>
+  </Agent>
+</Temper>

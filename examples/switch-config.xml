@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<switches>
+  <switch>
+    <id>4</id>
+    <name>Siege 4</name>
+    <ip>10.253.0.4</ip>
+    <dashboard>0</dashboard>
+    <snmpVersion>3</snmpVersion>
+    <snmpV3User>user_sha</snmpV3User>
+    <snmpV3Passphrase>the_public_passphrase</snmpV3Passphrase>
+    <snmpV3AuthProtocol>SHA</snmpV3AuthProtocol>
+    <snmpV3PrivProtocol>AES</snmpV3PrivProtocol>
+    <snmpV3PrivPassphrase>the_prviate_passphrase</snmpV3PrivPassphrase>
+    <snmpV3SecLevel>authPriv</snmpV3SecLevel>
+  </switch>
+  <switch>
+    <id>4</id>
+    <name>Siege 4</name>
+    <ip>10.253.0.4</ip>
+    <dashboard>0</dashboard>
+    <snmpVersion>3</snmpVersion>
+  </switch>
+</switches>

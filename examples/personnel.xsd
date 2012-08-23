@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
+
+  <!-- User defined types -->
+  <xs:complexType name="nameType">                              
+    <xs:sequence>                                               
+      <xs:element name="givenName">                             
+        <xs:simpleType>                                         
+          <xs:restriction base="string">                        
+            <xs:minLength value="1" />                          
+            <xs:maxLength value="64" />                         
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>                  
+      <xs:element name="initial">    
+        <xs:simpleType>              
+          <xs:restriction base="string">
+            <xs:length value="1" />     
+          </xs:restriction>      
+        </xs:simpleType>         
+      </xs:element>              
+      <xs:element name="familyName">
+        <xs:simpleType>
+          <xs:restriction base="string">
+            <xs:minLength value="1" />
+            <xs:maxLength value="64" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:element name="personnel">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="name" type="nameType" />
+        <xs:element name="title" type="string" />
+        <xs:element name="number" type="integer" />
+        <xs:element name="dateOfHire">
+          <xs:simpleType>
+            <xs:restriction base="string">
+              <xs:length value="8" />
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="nameOfSpouse" type="nameType" />
+        <xs:element name="children">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ChildInformation" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="name" type="nameType" minOccurs="0"/>
+                    <xs:element name="dateOfBirth" minOccurs="0">
+                      <xs:simpleType>
+                        <xs:restriction base="string">
+                          <xs:length value="8" />
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

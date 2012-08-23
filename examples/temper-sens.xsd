@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
+  
+  <xs:complexType name="Rtype">
+    <xs:sequence>
+      <xs:element name="Name">
+	<xs:simpleType>                                         
+	  <xs:restriction base="enumerated">                        
+            <xs:enumeration value="Binary 1" />
+	    <xs:enumeration value="Binary 2" />
+	    <xs:enumeration value="Binary 3" />
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>   
+      <xs:element name="Number">
+      	<xs:simpleType>                                         
+	  <xs:restriction base="enumerated">                        
+            <xs:enumeration value="Input1" />
+	    <xs:enumeration value="Input2" />
+	    <xs:enumeration value="Input3" />
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>
+      <xs:element name="Value" type="boolean"/>
+      <xs:element name="Alarm">
+	<xs:simpleType>                                         
+	  <xs:restriction base="enumerated">                        
+            <xs:enumeration value="Yes" />
+	    <xs:enumeration value="No" />
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>
+      <xs:element name="State" type="boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Entrytype">
+    <xs:sequence>
+      <xs:element name="Name">
+	<xs:simpleType>                                         
+	  <xs:restriction base="enumerated">                        
+            <xs:enumeration value="Sensor" />
+	    <xs:enumeration value="Accelerometer" />
+	    <xs:enumeration value="Radiation" />
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>   
+      <xs:element name="Type"  type="string"/>
+      <xs:element name="ID" type="integer"/>
+      <xs:element name="Temper"  type="decimal"/>
+      <xs:element name="TempRange" type="string"/>
+      <xs:element name="Alarm">
+	<xs:simpleType>                                         
+	  <xs:restriction base="enumerated">                        
+            <xs:enumeration value="Yes" />
+	    <xs:enumeration value="No" />
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>
+      <xs:element name="State" type="boolean"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="TemperRangetype">
+    <xs:sequence>
+      <xs:element name="min" type="integer"/>
+      <xs:element name="max"  type="integer"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Agenttype">
+    <xs:sequence>
+      <xs:element name="version" type="string"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Tempertype">
+    <xs:sequence>
+      <xs:element name="Binary">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="R1" type="Rtype"/>
+            <xs:element name="R2" type="Rtype"/>
+            <xs:element name="R3" type="Rtype"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Sensors">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="SensorTable">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Entry" type="Entrytype" maxOccurs="unbounded"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="TemperRange" type="TemperRangetype"/>
+      <xs:element name="Agent" type="Agenttype"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:element name="Temper" type="Tempertype"/>
+  
+</xs:schema>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE Template SYSTEM "../router-addnet.dtd">
+<Template>
+  <type>UnitaryComputerSystem</type>
+  <filterSet>
+    <filterList>
+      <operand1>.1.3.6.1.4.1.81.17.2.11</operand1>
+      <operator>equals</operator>
+      <part>sysOid</part>
+    </filterList>
+    <filterList>
+      <operand1>.1.3.6.1.4.1.81.17.1.15</operand1>
+      <operator>equals</operator>
+      <part>sysOid</part>
+    </filterList>
+  </filterSet>
+  <boolExp>2</boolExp>
+  <index>13</index>
+  <enabled>true</enabled>
+  <action>1</action>
+</Template>

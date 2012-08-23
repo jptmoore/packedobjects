@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE snmp-discovery SYSTEM "../router-disc.dtd">
+<snmp-discovery>
+  <file-info>
+    <format-version>1.0</format-version>
+  </file-info>
+  <data-dir>/srv/torrus/collector_rrd</data-dir>
+  <domain-name> </domain-name>
+  <host-subtree>/Routers</host-subtree>
+  <output-file>myrouters.xml</output-file>
+  <rrd-hwpredict>no</rrd-hwpredict>
+  <snmp-port>161</snmp-port>
+  <snmp-retries>2</snmp-retries>
+  <snmp-timeout>10</snmp-timeout>
+  <snmp-version>2</snmp-version>
+  <host>
+    <snmp-host>10.0.0.1</snmp-host>
+    <symbolic-name>10.0.0.1</symbolic-name>
+    <collector-period>15</collector-period>
+    <collector-timeoffset>0</collector-timeoffset>
+  </host>
+  <host1>
+    <snmp-host>10.0.0.1</snmp-host>
+    <symbolic-name>10.0.0.1</symbolic-name>
+  </host1>
+</snmp-discovery>

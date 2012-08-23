@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
+
+<xs:complexType name="snmp-discoverytype">
+    <xs:sequence>
+      <xs:element name="file-info">
+	<xs:complexType>
+	  <xs:sequence>
+	     <xs:element name="format-version" type="decimal"/>
+	  </xs:sequence>
+	</xs:complexType>
+      </xs:element>
+      <xs:element name="data-dir" type="string"/>
+      <xs:element name="domain-name" type="string"/>
+      <xs:element name="host-subtree"   type="string"/>
+      <xs:element name="output-file"  type="string"/>
+      <xs:element name="rrd-hwpredict"    type="string"/>
+      <xs:element name="snmp-port"   type="integer"/>
+      <xs:element name="snmp-retries" type="integer"/>
+      <xs:element name="snmp-timeout"   type="integer"/>
+      <xs:element name="snmp-version"  type="integer"/>
+      <xs:element name="host">
+	<xs:complexType>
+	  <xs:sequence>
+	     <xs:element name="snmp-host" type="string"/>
+	     <xs:element name="symbolic-name" type="string"/>
+	     <xs:element name="collector-period" type="integer"/>
+	     <xs:element name="collector-timeoffset" type="integer"/>
+	  </xs:sequence>
+	</xs:complexType>
+      </xs:element>
+      <xs:element name="host1">
+	<xs:complexType>
+	  <xs:sequence>
+	     <xs:element name="snmp-host" type="string"/>
+	     <xs:element name="symbolic-name" type="string"/>
+	  </xs:sequence>
+	</xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+<xs:element name="snmp-discovery" type="snmp-discoverytype"/>
+  
+</xs:schema>

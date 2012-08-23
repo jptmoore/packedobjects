@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
+  
+  <xs:complexType name="axistype">
+    <xs:sequence>
+      <xs:element name="x" type="integer"/>
+      <xs:element name="y" type="integer"/>
+      <xs:element name="z"  type="integer"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="timetype">
+    <xs:sequence>
+      <xs:element name="posix" type="integer"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="datatype">
+    <xs:sequence>
+      <xs:element name="device">
+	<xs:simpleType>                                         
+	  <xs:restriction base="enumerated">                        
+            <xs:enumeration value="OM" />                          
+            <xs:enumeration value="NN" />                         
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>   
+      <xs:element name="rate" type="integer"/>
+      <xs:element name="noise"  type="integer"/>
+      <xs:element name="covariance"  type="integer"/>
+      <xs:element name="axis"  type="axistype"/>
+      <xs:element name="time"  type="timetype"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="logtype">
+    <xs:sequence>
+      <xs:element name="sensortype">
+	<xs:complexType>
+	  <xs:sequence>
+	    <xs:element name="accelerometer">
+	      <xs:complexType>
+		<xs:sequence>
+		  <xs:element name="data" type="datatype" maxOccurs="unbounded" />
+		</xs:sequence>
+	      </xs:complexType>
+	    </xs:element>
+	  </xs:sequence>
+	</xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="log" type="logtype"/>
+  
+</xs:schema>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE DeviceInformation SYSTEM "../iptel-devinfo.dtd">
+<DeviceInformation>
+   <MACAddress>0003E369A125</MACAddress>
+   <HostName>SEP0003E369A125</HostName>
+   <phoneDN>5920</phoneDN>
+   <appLoadID>P00308010200</appLoadID>
+   <bootLoadID>PC03A300</bootLoadID>
+   <versionID>8.1</versionID>
+   <DSPLoadID>4.0</DSPLoadID>
+   <addonModule1></addonModule1>
+   <addonModule2></addonModule2>
+   <hardwareRevision>1.0</hardwareRevision>
+   <serialNumber>INMXXXXXXX</serialNumber>
+   <modelNumber>CP-7940</modelNumber>
+   <Codec>ADLCodec</Codec>
+   <Amps>3V Amp</Amps>
+   <C3PORevision>2</C3PORevision>
+   <MessageWaiting>OUI</MessageWaiting>
+</DeviceInformation>

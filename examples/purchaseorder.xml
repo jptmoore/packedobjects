@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<purchaseOrder>
+  <shipTo>
+    <name>Alice</name>
+    <street>123</street>
+    <city>Mill</city>
+    <state>CA</state>
+    <zip>90952</zip>
+  </shipTo>
+  <billTo>
+    <name>Robert</name>
+    <street>8</street>
+    <city>Town</city>
+    <state>PA</state>
+    <zip>95819</zip>
+  </billTo>
+  <items>
+    <item>
+      <productName>Lawnmower</productName>
+      <quantity>1</quantity>
+      <USPrice>148.95</USPrice>
+      <shipDate>02-02-2002</shipDate>     
+    </item>
+    <item>
+      <productName>Monitor</productName>
+      <quantity>1</quantity>
+      <USPrice>39.98</USPrice>
+      <comment>this is electric</comment>
+      <shipDate>01-01-2001</shipDate>
+    </item>
+  </items>
+</purchaseOrder>
