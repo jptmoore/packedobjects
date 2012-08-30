@@ -77,7 +77,11 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
     fprintf(stderr, "Could not alllocate memory.\n");
     exit(1);    
   }
-  doc_schema = packedobjects_new_doc(schema_file);
+  
+  if ((doc_schema = packedobjects_new_doc(schema_file)) == NULL) {
+    return NULL;
+  }
+
   // supplied at encode
   poCtxPtr->doc_data = NULL;
   poCtxPtr->doc_schema = doc_schema;
@@ -91,7 +95,10 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
   }
   
   // setup validation context
-  schemap = xml_compile_schema(doc_schema);
+  if ((schemap = xml_compile_schema(doc_schema)) == NULL) {
+    return NULL;
+  }
+
   poCtxPtr->schemap = schemap;
 
 

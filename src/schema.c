@@ -19,13 +19,13 @@ schemaData *xml_compile_schema(xmlDoc *schema)
 
   if ((schemap = (schemaData *)malloc(sizeof(schemaData))) == NULL) {
     fprintf(stderr, "Could not alllocate memory.\n");
-    exit(1);    
+    return NULL;
   }
   
   parserCtxt = xmlSchemaNewDocParserCtxt(schema);
   if (parserCtxt == NULL) {
     fprintf(stderr, "Could not create XSD schema parsing context.\n");
-    exit(1);
+    return NULL;
   }
   schemaPtr = xmlSchemaParse(parserCtxt);
   if (schemaPtr == NULL) {
@@ -35,7 +35,7 @@ schemaData *xml_compile_schema(xmlDoc *schema)
   validCtxt = xmlSchemaNewValidCtxt(schemaPtr);
   if (!validCtxt) {
     fprintf(stderr, "Could not create XSD schema validation context.\n");
-    exit(1);
+    return NULL;
   }    
 
   schemap->parserCtxt = parserCtxt;
