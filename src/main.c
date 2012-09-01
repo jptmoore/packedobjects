@@ -143,15 +143,15 @@ int main(int argc, char **argv)
       }
   }
 
-  // initialise packedobjects
-  if ((pc = init_packedobjects(schema_file)) == NULL) {
-    exit_with_message("failed to initialise libpackedobjects");
-  }
-  
   // do some simple checking
   if (!schema_file) exit_with_message("did not specify --schema file");
   if (!in_file) exit_with_message("did not specify --in file");
   if (!out_file) exit_with_message("did not specify --out file");
+
+  // initialise packedobjects
+  if ((pc = init_packedobjects(schema_file)) == NULL) {
+    exit_with_message("failed to initialise libpackedobjects");
+  }
 
   // check file endings to determine if encode or decode
   in_file_ext = get_filename_ext(in_file);
