@@ -1,0 +1,123 @@
+\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename tutorial.info
+@settitle libpackedobjects tutorial
+@c %**end of header
+
+@copying
+libpackedobjects - an XML schema-aware compression library
+     
+Copyright @copyright{} 2011 John P. T. Moore
+@end copying
+
+@titlepage
+@title libpackedobjects tutorial
+     
+@c The following two commands start the copyright page.
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+     
+@c Output the table of contents at the beginning.
+@contents
+
+@ifnottex
+@node Top
+@top libpackedobjects tutorial
+     
+libpackedobjects - an XML schema-aware compression library
+@end ifnottex
+     
+@menu
+* Introduction::                Introduction
+* Installation::                Installation
+* Getting started::             Getting started
+* Data types::                  Data types
+* Index::                       Index
+@end menu
+
+@node Introduction
+@chapter Introduction
+
+@section What is libpackedobjects?
+@cindex What is libpackedobjects
+
+libpackedobjects is a C library which can be used to efficiently compress an XML DOM by using the information provided by a corresponding XML Schema. The tool is designed for writing network protocols which strive to minimise the amount of data communicated. This is similar to something like @uref{http://code.google.com/p/protobuf/, Protocol Buffers} but using XML. As well as encode efficiently the tool validates all data according to the schema.
+@* @*
+libpackedobjects is based on libxml2 and therefore should run on any system that libxml2 runs on. 
+
+@section Key features
+@cindex Key features
+
+@itemize
+@item
+Very efficient encoding size yet fast
+@item
+Good choice of data types including the ability to apply range and size constraints
+@item
+Fully dynamic including the ability to change the protocol at runtime
+@item
+Simple API with two main function calls
+@item
+Highly portable: supported on embedded Linux and mobile platforms
+@end itemize
+     
+@noindent
+
+@section Use case
+libpackedobjects is currently being incorporated into an XML messaging framework for specific use on wireless networks.
+@cindex Use case
+
+@section Limitations
+@cindex Limitations
+
+libpackedobjects is not a general purpose document compression tool. It is intended to be used in an application that generates XML that you wish to communicate over a network. As such it provides a simple DOM-based API for encoding and decoding structured data. The compression technique used is based on applying knowledge of the data types specified in a schema to provide better performance over statistical compression techniques. Therefore, you must write a valid schema for your data. However, the schema serves the purpose of formalising the network protocol and provides validation. Thus we think having a schema is a good thing!
+
+@node Installation
+@chapter Installation
+
+@section Installing libpackedobjects
+@cindex Installing libpackedobjects
+
+To install from the latest source:
+@smallexample
+git clone git://gitorious.org/libpackedobjects/libpackedobjects.git
+cd libpackedobjects
+autoreconf -i
+./configure
+make
+make check
+sudo make install
+@end smallexample
+
+
+@section Further reading
+@cindex Further reading
+
+@node Getting started
+@chapter Getting started
+
+@section Quick start
+@cindex Quick start
+
+@section Writing a schema
+@cindex Writing a schema
+
+@node Data types
+@chapter Data types
+
+@section Simple types
+@cindex Simple types
+
+@section Complex types
+@cindex Complex types
+     
+@node Index
+@unnumbered Index
+     
+@printindex cp
+     
+@bye
+
+
