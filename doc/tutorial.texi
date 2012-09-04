@@ -73,7 +73,7 @@ Simple subset of XML Schema required to create protocols
 @section Limitations
 @cindex Limitations
 
-libpackedobjects is not a general purpose document compression tool. It is intended to be used in an application that generates XML that you wish to communicate over a network. As such it provides a simple DOM-based API for encoding and decoding structured data. The compression technique used is based on applying knowledge of the data types specified in a schema to provide better performance over statistical compression techniques. Therefore, you must write a valid schema for your data. The style of schema required is based on a small subset of XML Schema. This schema serves the purpose of formalising the network protocol and provides validation. Thus we think having a schema is a good thing!
+libpackedobjects is not a general purpose document compression tool. It is intended to be used in an application that generate XML that you wish to communicate over a network. As such it provides a simple DOM-based API for encoding and decoding structured data. The compression technique used is based on applying knowledge of the data types specified in a schema to provide better performance over statistical compression techniques. Therefore, you must write a valid schema for your data. The style of schema required is based on a small subset of XML Schema. This schema serves the purpose of formalising the network protocol and provides validation. Thus we think it is a good thing!
 
 @node Installation
 @chapter Installation
@@ -121,6 +121,27 @@ To decode run:
 $ ./packedobjects --schema foo.xsd --in foo.po --out foo.new.xml
 @end smallexample
 @noindent
+If you want to examine the performance of the tool you can use the @code{--loop} command-line flag. This will loop everything including opening and closing files but will only run the initialisation function one time to mirror intended use.
+
+@section API basics
+@cindex API basics
+
+There are only 4 main function calls which are made available by adding @code{#include <packedobjects/packedobjects.h>} to your code.
+@smallexample
+packedobjectsContext *init_packedobjects(const char *schema_file);
+
+char *packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc);
+
+xmlDocPtr packedobjects_decode(packedobjectsContext *pc, char *pdu);
+
+void free_packedobjects(packedobjectsContext *poCtxPtr);
+@end smallexample
+@noindent
+You first must initialise the library using your XML Schema. Typical use would be one called to init_packedobjects at startup and then multiple calls to encode/decode based on your protocol. The interface to the packedobjects_encode function requires a libxml2 doc type. The packedobjects_decode function returns a libxml2 doc type.
+    
+If during runtime your schema changed you must call the init function again with the new file. The library is designed to do preprocessing of the schema during the init function which then allows efficient encoding and decoding plus validation to take place. Therefore, do not call init_packedobjects more than once if you do not plan on supporting dynamically changing protocols at runtime.
+
+To build an application with the software you must link with the library. Using autoconf you can add @code{PKG_CHECK_MODULES([LIBPACKEDOBJECTS], [libpackedobjects])} to your configure.ac file and then use the variables @code{$(LIBPACKEDOBJECTS_CFLAGS)} and @code{$(PACKEDOBJECTS_LIBS)} in your Makefile.am file.
 
 @section Writing a schema
 @cindex Writing a schema
@@ -140,33 +161,46 @@ We then create the corresponding data:
 <foo>Hello World!</foo>
 @end smallexample
 @noindent
-This simple example only defines one data type which happens to be a string. However it provides a template for the basic structure of all schemas. You first must include the libpackedobjects data types and then specify a root element. In this case the root element is called 'name'.
+This simple example only defines one data type which happens to be a string. However it provides a template for the basic structure of all schemas. You first must include the libpackedobjects data types and then specify a root element. In this case the root element is called 'foo'.
 
-@subsection API basics
-@cindex API basics
+@section Schema styles: flat vs nested
+@cindex Schema styles: flat vs nested
 
-There are only 4 main function calls:
-@smallexample
-packedobjectsContext *init_packedobjects(const char *schema_file);
-
-char *packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc);
-
-xmlDocPtr packedobjects_decode(packedobjectsContext *pc, char *pdu);
-
-void free_packedobjects(packedobjectsContext *poCtxPtr);
-@end smallexample
-@noindent
-You first must initalise the library using your XML Schema. Typical use would be one called to init_packedobjects at startup and then multiple calls to encode/decode based on your protocol. If during runtime your schema changed you must called the init function again with the new file. The library is designed to do preposing of the schema during the init function which then allows efficient encoding and decoding plus validation to take place. Therefore, it makes no sense to call init_packedobjects more than once if you do not plan on supporting dynamically changing protocols at runtime. If you do you will suffer a needless performance cost.
 
 @node Data types
 @chapter Data types
 
+Writing a packedobjects schema involves using a set of predefined data types. These data types provide convenient syntax for representing information such as an IP address or currency etc. Please note, the list of valid simple types is likely to change.
+
 @section Simple types
 @cindex Simple types
 
+An up-to-date list of simple data types can be found  @uref{http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd, here.} All string types and integers can have additional constraints added to them. This not only controls the size of the encoded data but can act as an extra form of validation.
+
+@subsection String constraints
+@cindex String constraints
+
+@subsection Integer constraints
+@cindex Integer constraints
+
+
 @section Complex types
 @cindex Complex types
-     
+
+There are only two complex data types and these allow you to represent sequences and choices.
+
+@subsection Sequence
+@cindex Sequence
+
+@subsection Sequence with optionality
+@cindex Sequence with optionality
+
+@subsection Sequences with data that may repeat
+@cindex Sequence with data that may repeat
+
+@subsection Choice
+@cindex Choice
+
 @node Index
 @unnumbered Index
      
