@@ -162,10 +162,52 @@ We then create the corresponding data:
 @end smallexample
 @noindent
 This simple example only defines one data type which happens to be a string. However it provides a template for the basic structure of all schemas. You first must include the libpackedobjects data types and then specify a root element. In this case the root element is called 'foo'.
+@* @*
+The easiest way to learn how to write a schema is by looking at some of the examples available @uref{https://gitorious.org/libpackedobjects/libpackedobjects/trees/master/examples, here.}
 
 @section Schema styles: flat vs nested
 @cindex Schema styles: flat vs nested
 
+You have the choice of writing your schema in a flat style:
+
+@smallexample
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd"/>
+  <xs:complexType name="foobar">
+    <xs:sequence>
+      <xs:element name="bar" type="integer"/>
+      <xs:element name="baz" type="integer"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="foo" type="foobar"/>
+</xs:schema>
+@end smallexample
+@noindent
+You will see the use of a 'type' attribute to refer to the previously defined sequence. Or you can write your schema in a nested style:
+@smallexample
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd"/>
+  <xs:element name="foo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="bar" type="integer"/>
+        <xs:element name="baz" type="integer"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
+@end smallexample
+@noindent
+Either schema could be used with the following XML:
+@smallexample
+<?xml version="1.0" encoding="UTF-8"?>
+<foo>
+  <bar>1</bar>
+  <baz>2</baz>
+</foo>
+@end smallexample
 
 @node Data types
 @chapter Data types
