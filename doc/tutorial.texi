@@ -209,6 +209,24 @@ Either schema could be used with the following XML:
 </foo>
 @end smallexample
 
+@subsection Tips for writing an efficient schema
+@cindex Tips for writing an efficient schema
+
+If your schema is dominated by strings you may find that you are overusing this type. Are you sure the data could not be represented by another type? For example, the data you are modelling may be a string but only varies between a few different values. In such cases it is much more efficient to use an enumerated data type. For example we could represent the following data as a single string or we could use an enumeration as follows:
+@smallexample
+  <xs:element name="Name">
+    <xs:simpleType>
+      <xs:restriction base="enumerated">
+        <xs:enumeration value="Binary 1" />
+        <xs:enumeration value="Binary 2" />
+        <xs:enumeration value="Binary 3" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+@end smallexample
+@noindent
+When we encode @code{<Name>Binary 2</Name>} we only need a couple of bits instead of a number of bytes.
+
 @node Data types
 @chapter Data types
 
@@ -222,7 +240,7 @@ An up-to-date list of simple data types can be found  @uref{http://zedstar.org/x
 @subsection String constraints
 @cindex String constraints
 
-All string types can be constrained with size constraints: xs:minLength, xs:maxLength and xs:length. For example you might have:
+All string types can be constrained with size constraints: @code{xs:minLength}, @code{xs:maxLength} and @code{xs:length}. For example you might have:
 @smallexample
   <xs:element name="givenName">
     <xs:simpleType>
@@ -250,7 +268,7 @@ This only allows a single character to be present.
 @subsection Integer constraints
 @cindex Integer constraints
 
-Integers can be constrained with range constrants: xs:minInclusive and xs:maxInclusive. So you could use both constraints:
+Integers can be constrained with range constrants: @code{xs:minInclusive} and @code{xs:maxInclusive}. So you could use both constraints:
 @smallexample
   <xs:element name="foo">
     <xs:simpleType>
@@ -283,14 +301,147 @@ There are only two complex data types and these allow you to represent sequences
 @subsection Sequence
 @cindex Sequence
 
+A sequence is a way of logically grouping data within its own unique namespace. Every item in the sequence must be present and be in the correct order. So given the following:
+@smallexample
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd"/>
+  <xs:complexType name="foobar">
+    <xs:sequence>
+      <xs:element name="boz" type="integer"/>
+      <xs:element name="baz" type="integer"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="foo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="bar" type="foobar"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>    
+</xs:schema>
+@end smallexample
+@noindent
+We could supply the following data:
+@smallexample
+<?xml version="1.0" encoding="UTF-8"?>
+<foo>
+  <bar>
+    <boz>1</boz>
+    <baz>2</baz>
+  </bar>
+</foo>
+@end smallexample
+
+
 @subsection Sequence with optionality
 @cindex Sequence with optionality
+
+Sometimes we don't want to include everything in the sequence. In this case you can use a variant of the sequence type to express this optionality. You just need to add the attribute @code{minOccurs="0"} to the items which are optional. Using the previous example:
+@smallexample
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd"/>
+  <xs:complexType name="foobar">
+    <xs:sequence>
+      <xs:element name="boz" type="integer"/>
+      <xs:element name="baz" type="integer" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="foo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="bar" type="foobar"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>    
+</xs:schema>
+@end smallexample
+@noindent
+So in this case we saying you must include a boz item but baz items are optional. Therefore the following is now valid:
+@smallexample
+<?xml version="1.0" encoding="UTF-8"?>
+<foo>
+  <bar>
+    <boz>1</boz>
+  </bar>
+</foo>
+@end smallexample
 
 @subsection Sequences with data that may repeat
 @cindex Sequence with data that may repeat
 
+You will often work with data that has a repeating structure. You can handle this with a special form of sequence by adding the @code{maxOccurs="unbounded"} to item may repeat. Using the previous example we could do the following:
+@smallexample
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd"/>
+  <xs:complexType name="foobar">
+    <xs:sequence>
+      <xs:element name="boz" type="integer"/>
+      <xs:element name="baz" type="integer" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="foo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="bar" type="foobar" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>    
+</xs:schema>
+@end smallexample
+@noindent
+Now the following is valid:
+@smallexample
+<?xml version="1.0" encoding="UTF-8"?>
+<foo>
+  <bar>
+    <boz>1</boz>
+    <baz>2</baz>
+  </bar>
+  <bar>
+    <boz>1</boz>
+  </bar>
+</foo>
+@end smallexample
+
 @subsection Choice
 @cindex Choice
+
+The ability to structure data selectively is very powerful. You can easily implement simple network protocols where there is a choice between the different application messages. You could, for example, have a state machine which maps to different nested levels of choices. As a simple example we could implement a ping type protocol using:
+@smallexample
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd"/>
+  <xs:element name="pingpong">
+    <xs:complexType>
+      <xs:choice>
+        <xs:element name="ping" type="null" />
+        <xs:element name="pong" type="null" />
+      </xs:choice>
+    </xs:complexType>
+  </xs:element> 
+</xs:schema>
+@end smallexample
+@noindent
+Our client application might supply:
+@smallexample
+<?xml version="1.0" encoding="UTF-8"?>
+<pingpong>
+  <ping/>
+</pingpong
+@end smallexample
+@noindent
+And our server application might respond with:
+@smallexample
+<?xml version="1.0" encoding="UTF-8"?>
+<pingpong>
+  <pong/>
+</pingpong
+@end smallexample
+@noindent
+But both applications use the same network protocol or schema as they must have knowledge of both messages.
 
 @node Index
 @unnumbered Index
