@@ -222,9 +222,58 @@ An up-to-date list of simple data types can be found  @uref{http://zedstar.org/x
 @subsection String constraints
 @cindex String constraints
 
+All string types can be constrained with size constraints: xs:minLength, xs:maxLength and xs:length. For example you might have:
+@smallexample
+  <xs:element name="givenName">
+    <xs:simpleType>
+      <xs:restriction base="string">
+        <xs:minLength value="1" />
+        <xs:maxLength value="64" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>      
+@end smallexample
+@noindent
+This will restrict givenName to be between 1 and 64 characters in length (inclusive). Or you might use something like:
+@smallexample
+  <xs:element name="initial">
+    <xs:simpleType>
+      <xs:restriction base="string">
+        <xs:length value="1" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+@end smallexample
+@noindent
+This only allows a single character to be present.
+
 @subsection Integer constraints
 @cindex Integer constraints
 
+Integers can be constrained with range constrants: xs:minInclusive and xs:maxInclusive. So you could use both constraints:
+@smallexample
+  <xs:element name="foo">
+    <xs:simpleType>
+      <xs:restriction base="integer">
+        <xs:minInclusive value="0" />
+        <xs:maxInclusive value="100" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+@end smallexample
+@noindent
+Or you could just one of the constraints:
+@smallexample
+  <xs:element name="foo">
+    <xs:simpleType>
+      <xs:restriction base="integer">
+        <xs:maxInclusive value="100" />
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+@end smallexample
+@noindent
+In this case negative integers would be valid.
 
 @section Complex types
 @cindex Complex types
