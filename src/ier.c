@@ -993,7 +993,9 @@ static time_t rfc3339string_to_epoch(const char *timestring)
   memset(&tm, 0, sizeof(struct tm));
   
   if (strptime(timestring, "%FT%TZ", &tm) != 0) goto done;
-  if (strptime(timestring, "%FT%T%z", &tm) != 0) goto done;  
+  if (strptime(timestring, "%F %TZ", &tm) != 0) goto done;  
+  if (strptime(timestring, "%FT%T%z", &tm) != 0) goto done;
+  if (strptime(timestring, "%F %T%z", &tm) != 0) goto done;  
   
   // fall through to error
   printf("strptime() failed.\n");
