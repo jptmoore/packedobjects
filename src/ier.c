@@ -735,14 +735,17 @@ char *decodeSemiConstrainedOctetString(packedDecode *memBuf) {
 void encodeUnconstrainedInteger(packedEncode *memBuf, signed long int n) {
   
   if (n >= SCHAR_MIN && n <= SCHAR_MAX) {
+    uint8_t n8 = n;
     encode(memBuf, 0, 2);
-    encode(memBuf, (unsigned char)n, 8);
+    encode(memBuf, n8, 8);
   } else if (n >= SHRT_MIN && n <= SHRT_MAX) {
+    uint16_t n16 = n;
     encode(memBuf, 1, 2);
-    encode(memBuf, (unsigned short)n, 16);
+    encode(memBuf, n16, 16);
   } else if (n >= INT_MIN && n <= INT_MAX) {
+    uint32_t n32 = n;
     encode(memBuf, 2, 2);
-    encode(memBuf, (unsigned long)n, 32);    
+    encode(memBuf, n32, 32);    
   } else {
     dbg("handle this");
     // nothing to see here move along
@@ -755,19 +758,30 @@ signed long int decodeUnconstrainedInteger(packedDecode *memBuf) {
   signed long int n = 0;
 
   prefix = decode(memBuf, 2);
+  dbg("prefix:%d", prefix);
+
   
   if (prefix == 0) {
+    int8_t n8;
     n = (signed char)decode(memBuf, 8);
+    n8 = n;
+    return n8;
   } else if (prefix == 1) {
+    int16_t n16;
     n = (signed short)decode(memBuf, 16);
+    n16 = n;
+    return n16;
   } else if (prefix == 2) {
+    int32_t n32;
     n = (signed long)decode(memBuf, 32);
+    n32 = n;
+    return n32;
   } else {
     dbg("need to fix");
   }
-  
-  return n;
 
+  // dummy return
+  return n;
 }
 
 
