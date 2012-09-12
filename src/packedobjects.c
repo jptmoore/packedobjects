@@ -673,7 +673,7 @@ static void encode_node(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodeP
     encode_ipv4address(pc, data_node, schema_node);
   } else if (xmlStrEqual(type, BAD_CAST "utf8-string")) {
     encode_utf8_string(pc, data_node, schema_node);    
-  } else if (xmlStrEqual(type, BAD_CAST "unixTime")) {
+  } else if (xmlStrEqual(type, BAD_CAST "unix-time")) {
     encode_unix_time(pc, data_node, schema_node);    
   } else {
     fprintf(stderr, "Found a type I can't encode.\n");
@@ -1158,7 +1158,7 @@ static void decode_node(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodeP
     decode_currency(pc, data_node, schema_node);
   } else if (xmlStrEqual(type, BAD_CAST "ipv4-address")) {
     decode_ipv4address(pc, data_node, schema_node);
-  } else if (xmlStrEqual(type, BAD_CAST "unixTime")) {
+  } else if (xmlStrEqual(type, BAD_CAST "unix-time")) {
     decode_unix_time(pc, data_node, schema_node);
   } else if (xmlStrEqual(type, BAD_CAST "utf8-string")) {
     decode_utf8_string(pc, data_node, schema_node);    

@@ -4,7 +4,7 @@
   <xs:element name="log">
     <xs:complexType>
       <xs:sequence>
-        <xs:element name="timestamp" type="unixTime" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="timestamp" type="unix-time" minOccurs="0" maxOccurs="unbounded"/>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
