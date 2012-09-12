@@ -39,6 +39,7 @@ static void encode_choice(packedobjectsContext *pc, xmlNodePtr data_node, xmlNod
 static void encode_enumerated(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 static void encode_currency(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 static void encode_ipv4address(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
+static void encode_unix_time(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 
 
 static void decode_next(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
@@ -61,6 +62,8 @@ static void decode_currency(packedobjectsContext *pc, xmlNodePtr data_node, xmlN
 static void decode_enumerated(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 static void decode_choice(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 static void decode_ipv4address(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
+static void decode_unix_time(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
+
 
 packedobjectsContext *init_packedobjects(const char *schema_file)
 {
@@ -604,6 +607,17 @@ static void encode_ipv4address(packedobjectsContext *pc, xmlNodePtr data_node, x
   
 }
 
+static void encode_unix_time(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node)
+{
+  xmlChar *value = NULL;
+  
+  value = xmlNodeListGetString(pc->doc_data, data_node->xmlChildrenNode, 1);
+  dbg("value:%s", value);
+
+  encodeUnixTime(pc->encodep, (char *)value);
+  xmlFree(value);
+  
+}
 
 static void encode_node(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node)
 {
@@ -642,7 +656,9 @@ static void encode_node(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodeP
   } else if (xmlStrEqual(type, BAD_CAST "decimal")) {
     encode_decimal(pc, data_node, schema_node);
   } else if (xmlStrEqual(type, BAD_CAST "ipv4-address")) {
-    encode_ipv4address(pc, data_node, schema_node);    
+    encode_ipv4address(pc, data_node, schema_node);
+  } else if (xmlStrEqual(type, BAD_CAST "unixTime")) {
+    encode_unix_time(pc, data_node, schema_node);    
   } else {
     fprintf(stderr, "Found a type I can't encode.\n");
     // need to set something in pc
@@ -1010,6 +1026,16 @@ static void decode_ipv4address(packedobjectsContext *pc, xmlNodePtr data_node, x
   xmlFree(value);
 }
 
+static void decode_unix_time(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node)
+{
+
+  xmlChar *value = NULL;
+
+  value = BAD_CAST decodeUnixTime(pc->decodep);
+  xmlNewChild(data_node, NULL, schema_node->name, value);  
+  xmlFree(value);
+}
+
 static void decode_enumerated(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node)
 {
 
@@ -1105,7 +1131,9 @@ static void decode_node(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodeP
   } else if (xmlStrEqual(type, BAD_CAST "currency")) {
     decode_currency(pc, data_node, schema_node);
   } else if (xmlStrEqual(type, BAD_CAST "ipv4-address")) {
-    decode_ipv4address(pc, data_node, schema_node);    
+    decode_ipv4address(pc, data_node, schema_node);
+  } else if (xmlStrEqual(type, BAD_CAST "unixTime")) {
+    decode_unix_time(pc, data_node, schema_node);    
   } else if (xmlStrEqual(type, BAD_CAST "boolean")) {
     decode_boolean(pc, data_node, schema_node);
   } else if (xmlStrEqual(type, BAD_CAST "null")) {

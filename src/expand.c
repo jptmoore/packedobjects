@@ -22,6 +22,7 @@ char *simple_types[] =
     "decimal",
     "currency",
     "ipv4-address",
+    "unixTime",
     NULL
   };
 

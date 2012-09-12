@@ -6,6 +6,8 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+#include <time.h>
+
 #include "config.h"
 #include "ier.h"
 
@@ -63,7 +65,8 @@ static char numchar[] = {
 
 static int bitcount (unsigned int n);
 static int bits_required(unsigned int lb, unsigned int ub);
-
+static time_t rfc3339string_to_epoch(const char *timestring);
+static char *epoch_to_rfc3339string(char *buf, int size, time_t t);
 
 /* can not calculate for value 0 */
 static int bitcount (unsigned int n)
@@ -963,4 +966,80 @@ char *decodeIPv4Address(packedDecode *memBuf)
   
   // needs to be freed
   return ip;
+}
+
+
+// utility func
+static time_t rfc3339string_to_epoch(const char *timestring)
+{
+  struct tm tm;
+  time_t t;
+  time_t offset;
+
+  memset(&tm, 0, sizeof(struct tm));
+  
+  if (strptime(timestring, "%FT%TZ", &tm) != 0) goto done;
+  if (strptime(timestring, "%FT%T%z", &tm) != 0) goto done;  
+  
+  // fall through to error
+  printf("strptime() failed.\n");
+  return 0;
+  
+ done:
+
+  offset = tm.tm_gmtoff;
+  
+  tm.tm_isdst = -1;
+  t = timegm(&tm);
+  if (t == -1) {
+    printf("daylight saving error.\n");
+    return 0;    
+  }
+  
+  // add time zone offset
+  return t + offset;
+  
+}
+
+// utility function
+static char *epoch_to_rfc3339string(char *buf, int size, time_t t)
+{
+  const char *format = "%FT%TZ";
+  
+  if (strftime(buf, size, format, gmtime(&t)) == 0) {
+    fprintf(stderr, "strftime failed.\n");
+    return NULL;
+  }
+  
+  return buf;
+  
+}
+
+void encodeUnixTime(packedEncode *memBuf, char *timestring)
+{
+  time_t t;
+
+  t =  rfc3339string_to_epoch(timestring);
+  dbg("epoch:%ld", (long)t);
+  encodeUnconstrainedInteger(memBuf, (long)t);  
+  
+}
+
+char *decodeUnixTime(packedDecode *memBuf)
+{
+  char *timestring = NULL;
+  time_t t;
+    
+  
+  // allocating on heap to be consistent with other string functions
+  if ((timestring = (char *)malloc(30)) == NULL) {
+    dbg("need to handle this");
+  }
+  t = (time_t)decodeUnconstrainedInteger(memBuf);
+  dbg("epoch:%ld", (long)t);
+  epoch_to_rfc3339string(timestring, 30, t);
+  dbg("timestring:%s", timestring);
+  
+  // needs to be freed
+  return timestring;
 }

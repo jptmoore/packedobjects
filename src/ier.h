@@ -86,5 +86,9 @@ char *decodeCurrency(packedDecode *memBuf);
 void encodeIPv4Address(packedEncode *memBuf, char *dottedquad);
 char *decodeIPv4Address(packedDecode *memBuf);
 
+// string interface
+void encodeUnixTime(packedEncode *memBuf, char *timestring);
+char *decodeUnixTime(packedDecode *memBuf);
+
 
 #endif
