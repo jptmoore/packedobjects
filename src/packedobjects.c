@@ -939,16 +939,16 @@ static void decode_fixed_length_string(packedobjectsContext *pc, xmlNodePtr data
     value = decodeFixedLengthString(pc->decodep, len);
     break;
   case BIT_STRING:
-    value = decodeFixedLengthString(pc->decodep, len);
+    value = decodeFixedLengthBitString(pc->decodep, len);
     break;
   case NUMERIC_STRING:
-    value = decodeFixedLengthString(pc->decodep, len);
+    value = decodeFixedLengthNumericString(pc->decodep, len);
     break;
   case HEX_STRING:
-    value = decodeFixedLengthString(pc->decodep, len);
+    value = decodeFixedLengthHexString(pc->decodep, len);
     break;
   case OCTET_STRING:
-    value = decodeFixedLengthString(pc->decodep, len);
+    value = decodeFixedLengthOctetString(pc->decodep, len);
     break;  
   }
 
