@@ -40,6 +40,7 @@ static void encode_enumerated(packedobjectsContext *pc, xmlNodePtr data_node, xm
 static void encode_currency(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 static void encode_ipv4address(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 static void encode_unix_time(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
+static void encode_utf8_string(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 
 
 static void decode_next(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
@@ -63,7 +64,7 @@ static void decode_enumerated(packedobjectsContext *pc, xmlNodePtr data_node, xm
 static void decode_choice(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 static void decode_ipv4address(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 static void decode_unix_time(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
-
+static void decode_utf8_string(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 
 packedobjectsContext *init_packedobjects(const char *schema_file)
 {
@@ -619,6 +620,19 @@ static void encode_unix_time(packedobjectsContext *pc, xmlNodePtr data_node, xml
   
 }
 
+// special kind of octet-string without length restrictions
+static void encode_utf8_string(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node)
+{
+  xmlChar *value = NULL;
+  
+  value = xmlNodeListGetString(pc->doc_data, data_node->xmlChildrenNode, 1);
+  dbg("value:%s", value);
+
+  encodeSemiConstrainedOctetString(pc->encodep, (char *)value);
+  xmlFree(value);
+  
+}
+
 static void encode_node(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node)
 {
 
@@ -657,6 +671,8 @@ static void encode_node(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodeP
     encode_decimal(pc, data_node, schema_node);
   } else if (xmlStrEqual(type, BAD_CAST "ipv4-address")) {
     encode_ipv4address(pc, data_node, schema_node);
+  } else if (xmlStrEqual(type, BAD_CAST "utf8-string")) {
+    encode_utf8_string(pc, data_node, schema_node);    
   } else if (xmlStrEqual(type, BAD_CAST "unixTime")) {
     encode_unix_time(pc, data_node, schema_node);    
   } else {
@@ -1036,6 +1052,16 @@ static void decode_unix_time(packedobjectsContext *pc, xmlNodePtr data_node, xml
   xmlFree(value);
 }
 
+static void decode_utf8_string(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node)
+{
+
+  xmlChar *value = NULL;
+
+  value = BAD_CAST decodeSemiConstrainedOctetString(pc->decodep);
+  xmlNewChild(data_node, NULL, schema_node->name, value);  
+  xmlFree(value);
+}
+
 static void decode_enumerated(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node)
 {
 
@@ -1133,7 +1159,9 @@ static void decode_node(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodeP
   } else if (xmlStrEqual(type, BAD_CAST "ipv4-address")) {
     decode_ipv4address(pc, data_node, schema_node);
   } else if (xmlStrEqual(type, BAD_CAST "unixTime")) {
-    decode_unix_time(pc, data_node, schema_node);    
+    decode_unix_time(pc, data_node, schema_node);
+  } else if (xmlStrEqual(type, BAD_CAST "utf8-string")) {
+    decode_utf8_string(pc, data_node, schema_node);    
   } else if (xmlStrEqual(type, BAD_CAST "boolean")) {
     decode_boolean(pc, data_node, schema_node);
   } else if (xmlStrEqual(type, BAD_CAST "null")) {
