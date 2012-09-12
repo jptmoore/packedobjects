@@ -630,7 +630,7 @@ void encodeFixedLengthOctetString(packedEncode *memBuf, char *s, int len) {
   int i;
     
   for (i = 0; i < len; i++) {
-    encode(memBuf, *(s+i), EIGHT_BIT);
+    encode(memBuf, (unsigned char)*(s+i), EIGHT_BIT);
   }
 }
 
@@ -665,7 +665,7 @@ void encodeConstrainedOctetString(packedEncode *memBuf, char *s, int lb, int ub)
   encode(memBuf, len - lb, bits);
   
   for (i = 0; i < len; i++) {
-    encode(memBuf, *(s+i), EIGHT_BIT);
+    encode(memBuf, (unsigned char)*(s+i), EIGHT_BIT);
   }
   
 }
@@ -704,7 +704,7 @@ void encodeSemiConstrainedOctetString(packedEncode *memBuf, char *s) {
   encodeUnsignedSemiConstrainedInteger(memBuf, len, 0);
   
   for (i = 0; i < len; i++) {
-    encode(memBuf, *(s+i), EIGHT_BIT);
+    encode(memBuf, (unsigned char)*(s+i), EIGHT_BIT);
   }
   
 }
