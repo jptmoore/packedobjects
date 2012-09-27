@@ -1,4 +1,4 @@
-AC_INIT(libpackedobjects, 0.0.1, jmoore@zedstar.org)
+AC_INIT(libpackedobjects, 0.0.2, jmoore@zedstar.org)
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/])
 AM_CONFIG_HEADER([src/config.h])
