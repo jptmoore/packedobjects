@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <setjmp.h>
-
+#include <math.h>
 #include <time.h>
 
 #include "packedobjects.h"
@@ -939,7 +939,7 @@ void encodeCurrency(packedEncode *memBuf, char *n)
 
   dbg("x:%f", x);
   // get rid of 2 dp
-  y = x * 100;
+  y = round(x * 100);
   dbg("y:%ld", y);
 
   encodeUnsignedSemiConstrainedInteger(memBuf, y, 0);  
