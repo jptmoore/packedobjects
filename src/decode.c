@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include "decode.h"
 
 #ifdef DEBUG_MODE
@@ -11,6 +12,13 @@
   (printf(PROGNAME ":%s: " fmtstr "\n", __func__, ##args))
 #else
 #define dbg(dummy...)
+#endif
+
+#ifdef QUIET_MODE
+#define alert(dummy...)
+#else
+#define alert(fmtstr, args...) \
+  (printf(PROGNAME ":%s: " fmtstr "\n", __func__, ##args))
 #endif
 
 /* defined in encode.c */
@@ -23,7 +31,8 @@ packedDecode *initializeDecode(char * pdu) {
   packedDecode *memBuf;
   
   if ((memBuf = (packedDecode *)malloc(sizeof(packedDecode))) == NULL) {
-    dbg("replace this");
+    alert("Failed to allocate memory during initialisation.");
+    return NULL;
   }
   memBuf->ub = WORD_BIT;
   memBuf->word = 0;

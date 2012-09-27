@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE DeviceInformation SYSTEM "../iptel-devinfo.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
 <DeviceInformation>
    <MACAddress>0003E369A125</MACAddress>
    <HostName>SEP0003E369A125</HostName>

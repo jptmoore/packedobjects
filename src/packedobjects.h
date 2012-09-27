@@ -13,6 +13,15 @@
 #include "encode.h"
 #include "decode.h"
 
+enum STRING_TYPES { STRING, BIT_STRING, NUMERIC_STRING, HEX_STRING, OCTET_STRING };
+
+enum ERROR_CODES {
+  ENCODE_VALIDATION_FAILED = 100,
+  ENCODE_PDU_BUFFER_FULL,
+  DECODE_VALIDATION_FAILED,
+  DECODE_INVALID_PREFIX,
+};
+
 typedef struct {
   xmlDoc *doc_data;
   xmlDoc *doc_schema;
@@ -24,12 +33,13 @@ typedef struct {
   packedEncode *encodep;
   packedDecode *decodep;
   int bytes;
+  int encode_error;
+  int decode_error;
 } packedobjectsContext;
 
 xmlDocPtr packedobjects_new_doc(const char *file);
 char *packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc);
 xmlDocPtr packedobjects_decode(packedobjectsContext *pc, char *pdu);
-void packedobjects_validate(packedobjectsContext *poCtxPtr, xmlDocPtr doc);
 packedobjectsContext *init_packedobjects(const char *schema_file);
 void free_packedobjects(packedobjectsContext *poCtxPtr);
 void packedobjects_dump_doc(xmlDoc *doc);

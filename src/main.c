@@ -26,6 +26,10 @@ static void file_encode(packedobjectsContext *pc, const char *infile, const char
       exit_with_message("did not find .xml file");
     }
     pdu = packedobjects_encode(pc, doc);
+    if (pc->bytes == -1) {
+      fprintf(stderr, "Failed to encode with error %d.\n", pc->encode_error);
+      exit(EXIT_FAILURE);
+    }
     fp = fopen(outfile, "w");
     fwrite(pdu, 1, pc->bytes, fp);
     fclose(fp);
@@ -51,6 +55,10 @@ static void file_decode(packedobjectsContext *pc, const char *infile, const char
       exit_with_message(".po too large for MAX_PDU");
     }
     doc = packedobjects_decode(pc, pdu);
+    if (pc->decode_error) {
+      fprintf(stderr, "Failed to decode with error %d.\n", pc->decode_error);
+      exit(EXIT_FAILURE);
+    }
     xmlSaveFormatFileEnc(outfile, doc, "UTF-8", 1);
     fclose(fp);
     xmlFreeDoc(doc);

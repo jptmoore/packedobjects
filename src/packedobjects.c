@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <setjmp.h>
+#include <string.h>
 #include "packedobjects.h"
 #include "canon.h"
 #include "schema.h"
@@ -11,11 +13,21 @@
 #define dbg(dummy...)
 #endif
 
+#ifdef QUIET_MODE
+#define alert(dummy...)
+#else
+#define alert(fmtstr, args...) \
+  (fprintf(stderr, PROGNAME ":%s: " fmtstr "\n", __func__, ##args))
+#endif
+
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
-enum STRING_TYPES { STRING, BIT_STRING, NUMERIC_STRING, HEX_STRING, OCTET_STRING };
+// exception handling
+jmp_buf encode_exception_env;
+jmp_buf decode_exception_env;
 
-
+static void packedobjects_validate_encode(packedobjectsContext *poCtxPtr, xmlDocPtr doc);
+static void packedobjects_validate_decode(packedobjectsContext *poCtxPtr, xmlDocPtr doc);
 
 static void traverse_doc_data(packedobjectsContext *pc, xmlNode *node);
 static xmlNodePtr query_schema(packedobjectsContext *pc, xmlChar *xpath);
@@ -78,11 +90,12 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
   packedEncode *encodep = NULL;
   
   if ((poCtxPtr = (packedobjectsContext *)malloc(sizeof(packedobjectsContext))) == NULL) {
-    fprintf(stderr, "Could not alllocate memory.\n");
-    exit(1);    
+    alert("Could not alllocate memory.");
+    return NULL;    
   }
   
   if ((doc_schema = packedobjects_new_doc(schema_file)) == NULL) {
+    alert("Failed to create doc.");
     return NULL;
   }
 
@@ -94,12 +107,13 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
   if ((start_element_name = get_start_element(doc_schema))) { 
     poCtxPtr->start_element_name = start_element_name;
   } else {
-    fprintf(stderr,"Failed to find start element in schema\n");
+    alert("Failed to find start element in schema.");
     return NULL;    
   }
   
   // setup validation context
   if ((schemap = xml_compile_schema(doc_schema)) == NULL) {
+    alert("Failed to preprocess schema.");
     return NULL;
   }
 
@@ -117,12 +131,12 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
   // setup xpath
   xpathp = xmlXPathNewContext(poCtxPtr->doc_canonical_schema);
   if (xpathp == NULL) {
-    printf("Error in xmlXPathNewContext\n");
+    alert("Error in xmlXPathNewContext.");
     return NULL;
   }
 
   if(xmlXPathRegisterNs(xpathp, (const xmlChar *)NSPREFIX, (const xmlChar *)NSURL) != 0) {
-    fprintf(stderr,"Error: unable to register NS\n");
+    alert("Error: unable to register NS.");
     return NULL;
   }
 
@@ -130,10 +144,22 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
 
 
   // allocate buffer for PDU
-  pdu = malloc(MAX_PDU);
+  if ((pdu = malloc(MAX_PDU)) == NULL) {
+    alert("Failed to allocate PDU buffer.");
+    return NULL;
+  }
   // setup encode structure
-  encodep = initializeEncode(pdu, MAX_PDU);
+  if ((encodep = initializeEncode(pdu, MAX_PDU)) == NULL) {
+    alert("Failed to initialise encoder.");
+    return NULL;    
+  }
   poCtxPtr->encodep = encodep;
+
+  // set some defaults
+  poCtxPtr->bytes = 0;
+  poCtxPtr->encode_error = 0;
+  poCtxPtr->decode_error = 0;
+
   
   return poCtxPtr;
 }
@@ -165,7 +191,7 @@ xmlDocPtr packedobjects_new_doc(const char *file)
   doc = xmlReadFile(file, NULL, 0);
   
   if (doc == NULL) {
-    fprintf(stderr, "error: could not parse file %s\n", file);
+    alert("could not parse file %s", file);
   }
 
   return doc;
@@ -183,12 +209,12 @@ static xmlNodePtr query_schema(packedobjectsContext *pc, xmlChar *xpath)
   result = xmlXPathEvalExpression(xpath, pc->xpathp);
 
   if (result == NULL) {
-    fprintf(stderr, "Error in xmlXPathEvalExpression\n");
+    alert("Error in xmlXPathEvalExpression.");
     return NULL;
   }
   if(xmlXPathNodeSetIsEmpty(result->nodesetval)){
     xmlXPathFreeObject(result);
-    fprintf(stderr, "xpath:%s failed to query schema.\n", xpath);
+    alert("xpath:%s failed to query schema.", xpath);
     return NULL;
   }
 
@@ -196,7 +222,7 @@ static xmlNodePtr query_schema(packedobjectsContext *pc, xmlChar *xpath)
   if ((nodes->nodeNr) == 1) {
     node = nodes->nodeTab[0];
   } else {
-    fprintf(stderr, "xpath:%s did not find 1 node only.\n", xpath);
+    alert("xpath:%s did not find 1 node only.", xpath);
     return NULL;    
     
   }
@@ -227,13 +253,40 @@ static xmlChar *make_schema_query(xmlNodePtr node)
 
 char *packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc)
 {
-  int bytes = 0;
-  // validate data against schema
-  packedobjects_validate(pc, doc);
-  traverse_doc_data(pc, xmlDocGetRootElement(doc));
-  bytes = finalizeEncode(pc->encodep);
-  pc->bytes = bytes;
+  // default value indicates error
+  pc->bytes = -1;
+  // make sure we reset this on each call
+  pc->encode_error = 0;
+  
+  // exception handler
+  switch (setjmp(encode_exception_env)) {
+  case ENCODE_VALIDATION_FAILED:  
+    pc->encode_error = ENCODE_VALIDATION_FAILED;
+    break;
+  case ENCODE_PDU_BUFFER_FULL:
+    pc->encode_error = ENCODE_PDU_BUFFER_FULL;
+    break; 
+  case 0:
+    // validate data against schema
+    packedobjects_validate_encode(pc, doc);
+    traverse_doc_data(pc, xmlDocGetRootElement(doc));
+    pc->bytes = finalizeEncode(pc->encodep);
+  }
+  
   return (pc->encodep->pdu);
+}
+
+void packedobjects_validate_encode(packedobjectsContext *poCtxPtr, xmlDocPtr doc)
+{
+  int result;
+  schemaData *schemap = poCtxPtr->schemap;
+  
+  result = xmlSchemaValidateDoc(schemap->validCtxt, doc);
+  if (result) {
+    alert("Failed to validate XSD schema.");
+    longjmp(encode_exception_env, ENCODE_VALIDATION_FAILED);
+  }  
+
 }
 
 static void traverse_doc_data(packedobjectsContext *pc, xmlNode *node)
@@ -319,8 +372,7 @@ static void encode_integer(packedobjectsContext *pc, xmlNodePtr data_node, xmlNo
   } else if (xmlStrEqual(variant, BAD_CAST "constrained")) {
     encode_constrained_integer(pc, data_node, schema_node);    
   } else {
-    fprintf(stderr, "Found an integer variant I can't encode.\n");
-    // need to set something in pc    
+    alert("Found an integer variant I can't encode.");
   }
   xmlFree(variant);  
 
@@ -434,8 +486,7 @@ static void encode_string(packedobjectsContext *pc, xmlNodePtr data_node, xmlNod
   } else if (xmlStrEqual(variant, BAD_CAST "fixed-length")) {
     encode_fixed_length_string(pc, data_node, schema_node, type);
   } else {
-    fprintf(stderr, "Found a string variant I can't encode.\n");
-    // need to set something in pc    
+    alert("Found a string variant I can't encode.");
   }
   xmlFree(variant);
 }
@@ -676,30 +727,25 @@ static void encode_node(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodeP
   } else if (xmlStrEqual(type, BAD_CAST "unix-time")) {
     encode_unix_time(pc, data_node, schema_node);    
   } else {
-    fprintf(stderr, "Found a type I can't encode.\n");
-    // need to set something in pc
+    alert("Found a type I can't encode.");
   }
   xmlFree(type);
 
 }
 
 
-
-void packedobjects_validate(packedobjectsContext *poCtxPtr, xmlDocPtr doc)
+void packedobjects_validate_decode(packedobjectsContext *poCtxPtr, xmlDocPtr doc)
 {
   int result;
   schemaData *schemap = poCtxPtr->schemap;
   
   result = xmlSchemaValidateDoc(schemap->validCtxt, doc);
   if (result) {
-    fprintf(stderr, "Failed to validate XSD schema.\n");
-    exit(1);
+    alert("Failed to validate XSD schema.");
+    longjmp(decode_exception_env, DECODE_VALIDATION_FAILED);
   }  
 
-
-
 }
-
 
 
 void packedobjects_dump_doc(xmlDoc *doc)
@@ -878,8 +924,7 @@ static void decode_integer(packedobjectsContext *pc, xmlNodePtr data_node, xmlNo
   } else if (xmlStrEqual(variant, BAD_CAST "constrained")) {
     decode_constrained_integer(pc, data_node, schema_node);    
   } else {
-    fprintf(stderr, "Found an integer variant I can't encode.\n");
-    // need to set something in pc    
+    alert("Found an integer variant I can't decode.");    
   }
   xmlFree(variant); 
 }
@@ -1003,8 +1048,7 @@ static void decode_string(packedobjectsContext *pc, xmlNodePtr data_node, xmlNod
   } else if (xmlStrEqual(variant, BAD_CAST "fixed-length")) {
     decode_fixed_length_string(pc, data_node, schema_node, type);
   } else {
-    fprintf(stderr, "Found a string variant I can't encode.\n");
-    // need to set something in pc    
+    alert("Found a string variant I can't decode.");
   }
   xmlFree(variant);  
 
@@ -1037,7 +1081,7 @@ static void decode_ipv4address(packedobjectsContext *pc, xmlNodePtr data_node, x
 
   xmlChar *value = NULL;
 
-  value = BAD_CAST decodeIPv4Address(pc->decodep);
+  value = BAD_CAST decodeIPv4Address(pc->decodep); 
   xmlNewChild(data_node, NULL, schema_node->name, value);  
   xmlFree(value);
 }
@@ -1177,8 +1221,7 @@ static void decode_node(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodeP
   } else if (xmlStrEqual(type, BAD_CAST "choice")) {
     decode_choice(pc, data_node, schema_node);    
   } else {
-    fprintf(stderr, "Found a type I can't decode.\n");
-    // need to set something in pc
+    alert("Found a type I can't decode.");
   }
   xmlFree(type);
 
@@ -1190,25 +1233,33 @@ xmlDocPtr packedobjects_decode(packedobjectsContext *pc, char *pdu)
   xmlDocPtr doc_data = NULL;
   xmlNodePtr data_node = NULL;
   xmlNodePtr schema_node = NULL;
-  
-  pc->decodep = initializeDecode(pdu);
-  pc->doc_data = doc_data;
 
+  // make sure we reset this on each call
+  pc->decode_error = 0;
 
-  schema_node = xmlDocGetRootElement(pc->doc_canonical_schema);
-
-  // add a temporary root for convenience
-  data_node = xmlNewNode(NULL, BAD_CAST "root");  
-  decode_node(pc, data_node, schema_node);
-
-  dbg("creating XML data:");
-  doc_data = xmlNewDoc(BAD_CAST "1.0");
-  // ignore the temporary root
-  xmlDocSetRootElement(doc_data, data_node->children);
-  xmlFreeNode(data_node);  
-
-  // validate data against schema
-  packedobjects_validate(pc, doc_data);
+  // exception handler
+  switch (setjmp(decode_exception_env)) {
+  case DECODE_VALIDATION_FAILED:  
+    pc->decode_error = DECODE_VALIDATION_FAILED;
+    break;
+  case DECODE_INVALID_PREFIX:  
+    pc->decode_error = DECODE_INVALID_PREFIX;
+    break;  
+  case 0:
+    pc->decodep = initializeDecode(pdu);
+    pc->doc_data = doc_data;
+    schema_node = xmlDocGetRootElement(pc->doc_canonical_schema);
+    // add a temporary root for convenience
+    data_node = xmlNewNode(NULL, BAD_CAST "root");  
+    decode_node(pc, data_node, schema_node);
+    dbg("creating XML data:");
+    doc_data = xmlNewDoc(BAD_CAST "1.0");
+    // ignore the temporary root
+    xmlDocSetRootElement(doc_data, data_node->children);
+    xmlFreeNode(data_node);  
+    // validate data against schema
+    packedobjects_validate_decode(pc, doc_data);
+  }
   
   return doc_data;
 }

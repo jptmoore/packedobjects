@@ -5,9 +5,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <setjmp.h>
 
 #include <time.h>
 
+#include "packedobjects.h"
 #include "config.h"
 #include "ier.h"
 
@@ -27,6 +29,17 @@
 #else
 #define dbg(dummy...)
 #endif
+
+#ifdef QUIET_MODE
+#define alert(dummy...)
+#else
+#define alert(fmtstr, args...) \
+  (printf(PROGNAME ":%s: " fmtstr "\n", __func__, ##args))
+#endif
+
+// defined in packedobject.c
+extern jmp_buf encode_exception_env;
+extern jmp_buf decode_exception_env;
 
 static char hexchar[] = {
   '0',
@@ -130,7 +143,8 @@ char *decodeConstrainedBitString(packedDecode *memBuf, int lb, int ub) {
     
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;     
+    alert("Failed to allocate memory for string.");
+    return NULL;
   }  
   baseptr = s;
   
@@ -162,7 +176,8 @@ char *decodeFixedLengthBitString(packedDecode *memBuf, int len) {
     
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;      
+    alert("Failed to allocate memory for string.");
+    return NULL;
   }   
   baseptr = s;
   
@@ -201,7 +216,8 @@ char *decodeSemiConstrainedBitString(packedDecode *memBuf) {
 
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;      
+    alert("Failed to allocate memory for string.");
+    return NULL;      
   }	
   baseptr = s;	
   
@@ -231,7 +247,7 @@ void encodeFixedLengthHexString(packedEncode *memBuf, char *s, int len) {
     else if (c >= 'a' && c <= 'z')
       encode(memBuf, c - 'a' + 10, FOUR_BIT);
     else {
-      dbg("need to fix");;  
+      alert("Unsupported character.\n");
     }
   }
 }
@@ -243,7 +259,8 @@ char *decodeFixedLengthHexString(packedDecode *memBuf, int len) {
   
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;       
+    alert("Failed to allocate memory for string.");
+    return NULL;       
   }   
   baseptr = s;
   
@@ -281,7 +298,7 @@ void encodeConstrainedHexString(packedEncode *memBuf, char *s, int lb, int ub) {
     else if (c >= 'a' && c <= 'z')
       encode(memBuf, c - 'a' + 10, FOUR_BIT);
     else {
-      dbg("need to fix");;  
+      alert("Unsupported character");
     }
   }
 }
@@ -296,7 +313,8 @@ char *decodeConstrainedHexString(packedDecode *memBuf, int lb, int ub) {
    
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;      
+    alert("Failed to allocate memory for string.");
+    return NULL;   
   }  
   baseptr = s;
   
@@ -331,7 +349,7 @@ void encodeSemiConstrainedHexString(packedEncode *memBuf, char *s) {
     else if (c >= 'a' && c <= 'z')
       encode(memBuf, c - 'a' + 10, FOUR_BIT);
     else {
-      dbg("need to fix");;
+      alert("Unsupported character");
     }
   }
   
@@ -346,7 +364,8 @@ char *decodeSemiConstrainedHexString(packedDecode *memBuf) {
   
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;      
+    alert("Failed to allocate memory for string.");
+    return NULL;      
   } 	
   baseptr = s;	
   
@@ -375,7 +394,7 @@ void encodeFixedLengthNumericString(packedEncode *memBuf, char *s, int len) {
     else if (c == '.')
       encode(memBuf, 10, FOUR_BIT);
     else {
-      dbg("need to fix");;  
+      alert("Unsupported character");
     }
   }  
   
@@ -388,7 +407,8 @@ char *decodeFixedLengthNumericString(packedDecode *memBuf, int len) {
     
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;       
+    alert("Failed to allocate memory for string.");
+    return NULL;      
   }   
   baseptr = s;
   
@@ -425,7 +445,7 @@ void encodeConstrainedNumericString(packedEncode *memBuf, char *s, int lb, int u
     else if (c == '.')
       encode(memBuf, 10, FOUR_BIT);
     else {
-      dbg("need to fix");;  
+      alert("Unsupported character"); 
     }
   }  
 }
@@ -440,7 +460,8 @@ char *decodeConstrainedNumericString(packedDecode *memBuf, int lb, int ub) {
 
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;      
+    alert("Failed to allocate memory for string.");
+    return NULL;      
   }  
   baseptr = s;
 
@@ -475,7 +496,7 @@ void encodeSemiConstrainedNumericString(packedEncode *memBuf, char *s) {
     else if (c == '.')
       encode(memBuf, 10, FOUR_BIT);
     else {
-      dbg("need to fix");;  
+      alert("Unsupported character"); 
     }
   }  
 }
@@ -489,7 +510,8 @@ char *decodeSemiConstrainedNumericString(packedDecode *memBuf) {
   
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;      
+    alert("Failed to allocate memory for string.");
+    return NULL;      
   }   
   baseptr = s;  
   
@@ -523,7 +545,8 @@ char *decodeFixedLengthString(packedDecode *memBuf, int len) {
   
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;      
+    alert("Failed to allocate memory for string.");
+    return NULL;      
   }  
   baseptr = s;
   
@@ -567,7 +590,8 @@ char *decodeConstrainedString(packedDecode *memBuf, int lb, int ub) {
   
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");    
+    alert("Failed to allocate memory for string.");
+    return NULL;    
   }
   baseptr = s;
   
@@ -609,7 +633,8 @@ char *decodeSemiConstrainedString(packedDecode *memBuf) {
   
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;      
+    alert("Failed to allocate memory for string.");
+    return NULL;      
   }
   baseptr = s;
   
@@ -640,7 +665,8 @@ char *decodeFixedLengthOctetString(packedDecode *memBuf, int len) {
 
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;       
+    alert("Failed to allocate memory for string.");
+    return NULL;       
   }  
   baseptr = s;
   
@@ -679,7 +705,8 @@ char *decodeConstrainedOctetString(packedDecode *memBuf, int lb, int ub) {
   
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;      
+    alert("Failed to allocate memory for string.");
+    return NULL;      
   }	
   baseptr = s;
   
@@ -717,7 +744,8 @@ char *decodeSemiConstrainedOctetString(packedDecode *memBuf) {
   
   // add room for string plus null terminator
   if ((s = (char *)malloc(len + 1)) == NULL) {
-    dbg("need to fix");;      
+    alert("Failed to allocate memory for string.");
+    return NULL;      
   }  
   baseptr = s;
   
@@ -747,8 +775,7 @@ void encodeUnconstrainedInteger(packedEncode *memBuf, signed long int n) {
     encode(memBuf, 2, 2);
     encode(memBuf, n32, 32);    
   } else {
-    dbg("handle this");
-    // nothing to see here move along
+    alert("Unsupported integer range.");
   }
   
 }
@@ -777,7 +804,8 @@ signed long int decodeUnconstrainedInteger(packedDecode *memBuf) {
     n32 = n;
     return n32;
   } else {
-    dbg("need to fix");
+    alert("Invalid integer prefix.");
+    longjmp(decode_exception_env, DECODE_INVALID_PREFIX);
   }
 
   // dummy return
@@ -803,7 +831,6 @@ void encodeUnsignedSemiConstrainedInteger(packedEncode *memBuf, signed long int 
     encode(memBuf, 2, 2);
     encode(memBuf, (unsigned long)n, 32);
   } else {
-    dbg("handle this");
     // nothing to see here move along
   }
   
@@ -823,7 +850,8 @@ signed long int decodeUnsignedSemiConstrainedInteger(packedDecode *memBuf, signe
   } else if (prefix == 2) {
     n = (unsigned long)decode(memBuf, 32);
   } else {
-    dbg("need to fix");;
+    alert("Invalid integer prefix.");
+    longjmp(decode_exception_env, DECODE_INVALID_PREFIX);
   }
 
   dbg("n: %lu, lb: %ld", n, lb);
@@ -845,12 +873,12 @@ signed long int decodeUnsignedConstrainedInteger(packedDecode *memBuf, signed lo
 
 
 void encodeEnumerated(packedEncode *memBuf, unsigned long int n, unsigned len) {
-	/* ub = length - 1 */
-	encodeUnsignedConstrainedInteger(memBuf, n, 0, len-1);
+  /* ub = length - 1 */
+  encodeUnsignedConstrainedInteger(memBuf, n, 0, len-1);
 }
 
 unsigned long int decodeEnumerated(packedDecode *memBuf, unsigned len) {
-	return (decodeUnsignedConstrainedInteger(memBuf, 0, len-1));
+  return (decodeUnsignedConstrainedInteger(memBuf, 0, len-1));
 }
 
 void encodeBitmap(packedEncode *memBuf, unsigned long int n, int bits)
@@ -927,7 +955,8 @@ char *decodeCurrency(packedDecode *memBuf)
 
   // allocating on heap to be consistent with other string functions
   if ((n = (char *)malloc(12)) == NULL) {
-    dbg("need to handle this");
+    alert("Insufficient memory.");
+    return NULL;
   }
   x = decodeUnsignedSemiConstrainedInteger(memBuf, 0);
   dbg("x:%lu", x);
@@ -949,8 +978,7 @@ void encodeIPv4Address(packedEncode *memBuf, char *dottedquad)
 
   // Convert address to byte order
   if(!inet_pton(AF_INET, dottedquad, &addr)) {
-    fprintf(stderr, "Could not convert address\n");
-    dbg("do something");
+    alert("Could not convert address");
   }
   dbg("ip:%u", addr.s_addr);
   // covers the valid range
@@ -967,14 +995,14 @@ char *decodeIPv4Address(packedDecode *memBuf)
   
   // allocating on heap to be consistent with other string functions
   if ((ip = (char *)malloc(16)) == NULL) {
-    dbg("need to handle this");
+    alert("Insufficient memory.");
+    return NULL;
   }
   // covers the valid range value
   addr.s_addr = decodeUnsignedConstrainedInteger(memBuf, 1, 4294967263);
   dbg("ip:%u", addr.s_addr);
   if(inet_ntop(AF_INET, &addr.s_addr, ip, 16) == NULL) {
-    fprintf(stderr, "Could not convert byte to address\n");
-    dbg("handle this");
+    alert("Invalid IP address.");
   }  
   dbg("dotted quad:%s", ip);
   
@@ -998,7 +1026,7 @@ static time_t rfc3339string_to_epoch(const char *timestring)
   if (strptime(timestring, "%F %T%z", &tm) != 0) goto done;  
   
   // fall through to error
-  printf("strptime() failed.\n");
+  alert("strptime() failed.");
   return 0;
   
  done:
@@ -1008,7 +1036,7 @@ static time_t rfc3339string_to_epoch(const char *timestring)
   tm.tm_isdst = -1;
   t = timegm(&tm);
   if (t == -1) {
-    printf("daylight saving error.\n");
+    alert("daylight saving error.");
     return 0;    
   }
   
@@ -1023,8 +1051,7 @@ static char *epoch_to_rfc3339string(char *buf, int size, time_t t)
   const char *format = "%FT%TZ";
   
   if (strftime(buf, size, format, gmtime(&t)) == 0) {
-    fprintf(stderr, "strftime failed.\n");
-    return NULL;
+    alert("strftime failed.");
   }
   
   return buf;
@@ -1049,7 +1076,8 @@ char *decodeUnixTime(packedDecode *memBuf)
   
   // allocating on heap to be consistent with other string functions
   if ((timestring = (char *)malloc(30)) == NULL) {
-    dbg("need to handle this");
+    alert("Insufficient memory.");
+    return NULL;
   }
   t = (time_t)decodeUnconstrainedInteger(memBuf);
   dbg("epoch:%ld", (long)t);

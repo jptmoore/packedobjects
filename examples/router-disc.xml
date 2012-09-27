@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE snmp-discovery SYSTEM "../router-disc.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
 <snmp-discovery>
   <file-info>
     <format-version>1.0</format-version>

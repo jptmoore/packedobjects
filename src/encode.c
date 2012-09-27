@@ -4,7 +4,10 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <limits.h>
+#include <setjmp.h>
 
+// include for error codes
+#include "packedobjects.h"
 #include "encode.h"
 
 #ifdef DEBUG_MODE
@@ -13,6 +16,16 @@
 #else
 #define dbg(dummy...)
 #endif
+
+#ifdef QUIET_MODE
+#define alert(dummy...)
+#else
+#define alert(fmtstr, args...) \
+  (fprintf(stderr, PROGNAME ":%s: " fmtstr "\n", __func__, ##args))
+#endif
+
+// defined in packedobject.c
+extern jmp_buf encode_exception_env;
 
 unsigned mask32[] = {
   0,					
@@ -68,10 +81,12 @@ packedEncode *initializeEncode(char *pdu, int size) {
   packedEncode *memBuf;
   
   if ((memBuf = (packedEncode *)malloc(sizeof(packedEncode))) == NULL) {
-    dbg("replace this");
+    alert("Failed to allocate memory during initialisation.");
+    return NULL;
   }
   if ((memBuf->buf = calloc(WORD_BIT, WORD_BYTE)) == NULL) {
-    dbg("replace this");
+    alert("Failed to allocate memory during initialisation.");
+    return NULL;    
   }
   memBuf->pdu = pdu;
   memBuf->bufWords = 0;
@@ -136,7 +151,8 @@ static void addWord(packedEncode *memBuf, unsigned long int n) {
   
   bytes = ((memBuf->pduWords) * WORD_BYTE);
   if (bytes+WORD_BYTE > memBuf->size) {
-    dbg("replace this");
+    alert("encoder ran out of memory trying to copy to PDU.");
+    longjmp(encode_exception_env, ENCODE_PDU_BUFFER_FULL);
   }
   /* copy a word at pdu offset by bytes */
   memcpy((memBuf->pdu)+bytes, &n, WORD_BYTE);
