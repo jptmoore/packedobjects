@@ -25,16 +25,11 @@ do
 	}
 	differ()
 	{
-	    if diff --ignore-all-space --ignore-blank-lines -y --suppress-common-lines $file $newxml.new.xml; then
-		:
-	    else
-		echo -e "----------------------------------------------------------------------------------"
-	    fi
+	    diff --ignore-all-space --ignore-blank-lines -y --suppress-common-lines $file $newxml.new.xml; 
 	}
 
 	    encode
 	    decode
-	    differ
             # difference=$(differ)
 	    xmlsize=$(wc -c $file | egrep "[0-9]{1,}" -o)
 	    posize=$(wc -c $pofile.po | egrep "[0-9]{1,}" -o)
@@ -42,6 +37,7 @@ do
 	    percentage=$(echo "scale=3;(${posize}/${xmlsize})*100" | bc)
 	    echo -e "File: ${xmlsize} / ${posize} CR ${ratio} - ${percentage}%   \t${file}"
 	    # echo "$difference"
+	    differ
     fi
 done 
 } 
