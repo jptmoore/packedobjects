@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
+
+  <xs:complexType name="sidestype">
+    <xs:sequence>
+      <xs:element name="side" maxOccurs="unbounded">
+	<xs:simpleType>                                         
+	  <xs:restriction base="enumerated">                     
+            <xs:enumeration value="Chips" />                          
+            <xs:enumeration value="Tomatoes" />    
+            <xs:enumeration value="Eggs" />                          
+            <xs:enumeration value="Apricots" />   
+            <xs:enumeration value="Tortilla" />                          
+            <xs:enumeration value="Beans" />   
+            <xs:enumeration value="Cheese" />                          
+            <xs:enumeration value="Souces" />                        
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>   
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="itemstype">
+    <xs:sequence>
+      <xs:element name="beverage">
+	<xs:simpleType>                                         
+	  <xs:restriction base="enumerated">                        
+            <xs:enumeration value="Latte" />                          
+            <xs:enumeration value="Americano" />   
+	    <xs:enumeration value="Cappuccino" />
+	    <xs:enumeration value="Espresso" />
+	    <xs:enumeration value="Beer" />                      
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>
+      <xs:element name="main">
+	<xs:simpleType>                                         
+	  <xs:restriction base="enumerated">                        
+            <xs:enumeration value="Smoked Salmon and Egg Scramble" />                          
+            <xs:enumeration value="Egg Scramble and Smoked Bacon" />   
+	    <xs:enumeration value="Ham and Cheese Panini" />
+	    <xs:enumeration value="Home 6oz Sirloin Steak" />
+	    <xs:enumeration value="Hunters Chicken and Bacon" />                      
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>
+      <xs:element name="sides" type="sidestype"/>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:complexType name="menutype">
+    <xs:sequence>
+      <xs:element name="name">
+	<xs:simpleType>                                         
+	  <xs:restriction base="enumerated">                        
+            <xs:enumeration value="Early Bird" />                          
+            <xs:enumeration value="Full English" />   
+	    <xs:enumeration value="Panini Sandwich" />
+	    <xs:enumeration value="Chicken Burger" />
+	    <xs:enumeration value="House Steak" />                      
+          </xs:restriction>          
+        </xs:simpleType>             
+      </xs:element>
+      <xs:element name="mealNo" type="integer"/>
+      <xs:element name="items" type="itemstype"/>
+      <xs:element name="price" type="decimal"/>
+
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="mealtype">
+    <xs:choice>
+        <xs:element name="breakfast" type="menutype" />
+        <xs:element name="lunch" type="menutype" />
+	<xs:element name="dinner" type="menutype" />
+      </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="kiosktype">
+    <xs:sequence>
+      <xs:element name="order">
+	<xs:complexType>
+	  <xs:sequence>
+	    <xs:element name="table" type="integer"/>
+	    <xs:element name="dateTime" type="unix-time"/>
+	    <xs:element name="menu">
+	      <xs:complexType>
+		<xs:sequence>
+		  <xs:element name="meal" type="mealtype" maxOccurs="unbounded" />
+		</xs:sequence>
+	      </xs:complexType>
+	    </xs:element>
+	  </xs:sequence>
+	</xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:element name="kiosk" type="kiosktype"/>
+  
+</xs:schema>
