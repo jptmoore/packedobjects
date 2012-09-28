@@ -28,10 +28,9 @@ jmp_buf decode_exception_env;
 
 static void packedobjects_validate_encode(packedobjectsContext *poCtxPtr, xmlDocPtr doc);
 static void packedobjects_validate_decode(packedobjectsContext *poCtxPtr, xmlDocPtr doc);
-
 static void traverse_doc_data(packedobjectsContext *pc, xmlNode *node);
 static xmlNodePtr query_schema(packedobjectsContext *pc, xmlChar *xpath);
-static xmlChar *make_schema_query(xmlNodePtr node);
+static void make_schema_query(char new_path[], char old_path[]);
 static xmlChar *get_start_element(xmlDocPtr doc);
 static void encode_node(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 static void encode_integer(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
@@ -231,24 +230,24 @@ static xmlNodePtr query_schema(packedobjectsContext *pc, xmlChar *xpath)
   return node;
 }
 
+
 // needed to remove any [] which come from repeating sequences
-static xmlChar *make_schema_query(xmlNodePtr node)
+static void make_schema_query(char new_path[], char old_path[])
 {
-  xmlChar *path1 = NULL, *path2 = NULL;
-  const xmlChar *sp = NULL;
-  xmlChar *left_string = NULL;
-  
-  path1 = xmlGetNodePath(node);
-  if ((sp = xmlStrchr(path1, '['))) {
-    left_string = xmlStrndup(path1, sp - path1);
-    sp = xmlStrchr(sp, ']');
-    path2 = xmlStrncatNew(left_string, ++sp, -1);
-    xmlFree(left_string);
-    xmlFree(path1);
-    return path2;
-  } else {
-    return path1;
+  char *p1 = old_path;
+  char *p2 = new_path;
+  int copying = 1;
+  while (*p1 != '\0') {
+    if (*p1 == '[') copying = 0;
+    if (copying) {
+      *p2 = *p1;
+      p2++;
+    }
+    if (*p1 == ']') copying = 1;
+    p1++;
   }
+  // add null terminator
+  *p2 = '\0';
 }
 
 char *packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc)
@@ -293,16 +292,19 @@ static void traverse_doc_data(packedobjectsContext *pc, xmlNode *node)
 {
   xmlNode *cur_node = NULL;
   xmlChar *path = NULL;
-  xmlNodePtr schema_node = NULL;  
+  xmlNodePtr schema_node = NULL;
+  // needs to hold the longest xpath
+  char new_path[4096];
   
   for (cur_node = node; cur_node; cur_node = cur_node->next) {
     if (cur_node->type == XML_ELEMENT_NODE) {
-      path = make_schema_query(cur_node);
-      if ((schema_node = query_schema(pc, path))) {
-        dbg("path:%s", path);
+      path = xmlGetNodePath(cur_node);
+      make_schema_query(new_path, (char *)path);
+      free(path);
+      if ((schema_node = query_schema(pc, BAD_CAST new_path))) {
+        dbg("new_path:%s", new_path);
         encode_node(pc, cur_node, schema_node);
       }
-      free(path); 
     }
     traverse_doc_data(pc, cur_node->children);
   }
