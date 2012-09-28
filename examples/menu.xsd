@@ -63,10 +63,7 @@
           </xs:restriction>          
         </xs:simpleType>             
       </xs:element>
-      <xs:element name="mealNo" type="integer"/>
       <xs:element name="items" type="itemstype"/>
-      <xs:element name="price" type="decimal"/>
-
     </xs:sequence>
   </xs:complexType>
 
@@ -83,8 +80,6 @@
       <xs:element name="order">
 	<xs:complexType>
 	  <xs:sequence>
-	    <xs:element name="table" type="integer"/>
-	    <xs:element name="dateTime" type="unix-time"/>
 	    <xs:element name="menu">
 	      <xs:complexType>
 		<xs:sequence>

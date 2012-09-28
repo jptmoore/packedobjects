@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kiosk>
   <order>
-    <table>12</table>
-    <dateTime>2012-09-27 23:51:35Z</dateTime>
     <menu>
       <meal>
 	<breakfast>
 	  <name>Early Bird</name>
-	  <mealNo>102</mealNo>
 	  <items>
 	    <beverage>Latte</beverage>
 	    <main>Smoked Salmon and Egg Scramble</main>
@@ -17,13 +14,11 @@
 	      <side>Apricots</side>
 	    </sides>
 	  </items>
-	  <price>10.00</price>
 	</breakfast>
       </meal>
       <meal>
 	<breakfast>
 	  <name>Full English</name>
-	  <mealNo>102</mealNo>
 	  <items>
 	    <beverage>Americano</beverage>
 	    <main>Egg Scramble and Smoked Bacon</main>
@@ -33,13 +28,11 @@
 	      <side>Cheese</side>
 	    </sides>
 	  </items>
-	  <price>15.00</price>
 	</breakfast>
       </meal>
       <meal>
 	<lunch>
 	  <name>Panini Sandwich</name>
-	  <mealNo>102</mealNo>
 	  <items>
 	    <beverage>Beer</beverage>
 	    <main>Ham and Cheese Panini</main>
@@ -49,7 +42,6 @@
 	      <side>Souces</side>
 	    </sides>
 	  </items>
-	  <price>15.00</price>
 	</lunch>
       </meal>
     </menu>
