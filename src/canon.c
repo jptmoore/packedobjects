@@ -8,6 +8,13 @@
 #define dbg(dummy...)
 #endif
 
+#ifdef QUIET_MODE
+#define alert(dummy...)
+#else
+#define alert(fmtstr, args...) \
+  (fprintf(stderr, PROGNAME ":%s: " fmtstr "\n", __func__, ##args))
+#endif
+
 static xmlDocPtr make_canonical_schema(xmlDocPtr doc);
 static void make_canonical_schema_worker(xmlNode *node1, xmlNode *node2);  
 static xmlNodePtr make_simple_simple_type(xmlNodePtr node);
@@ -277,7 +284,9 @@ static xmlNodePtr make_complex_type(xmlNodePtr node)
     xmlNewProp(new_node, BAD_CAST "type", BAD_CAST "choice");
     xmlNewProp(new_node, BAD_CAST "items", BAD_CAST items);
   } else {
-    dbg("we got a problem!");
+    alert("unsupported type: %s", np->name);
+    // replace this with longjmp when exception handler added
+    exit(EXIT_FAILURE);
   }
   
   return new_node;
