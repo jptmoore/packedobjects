@@ -893,7 +893,7 @@ static void decode_unconstrained_integer(packedobjectsContext *pc, xmlNodePtr da
 {
 
   signed long int n;
-  char value[11];
+  char value[12];
   
   n = decodeUnconstrainedInteger(pc->decodep);
   dbg("n:%ld", n);
@@ -908,7 +908,7 @@ static void decode_semi_constrained_integer(packedobjectsContext *pc, xmlNodePtr
 {
 
   signed long int n;
-  char value[11];
+  char value[12];
   xmlChar *minInclusive = NULL;
   int lb;
 
@@ -930,7 +930,7 @@ static void decode_constrained_integer(packedobjectsContext *pc, xmlNodePtr data
 {
 
   signed long int n;
-  char value[11];
+  char value[12];
   xmlChar *minInclusive = NULL;
   xmlChar *maxInclusive = NULL;
   int lb, ub;
