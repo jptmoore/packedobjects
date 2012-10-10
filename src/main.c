@@ -62,7 +62,7 @@ static void file_decode(packedobjectsContext *pc, const char *infile, const char
     xmlSaveFormatFileEnc(outfile, doc, "UTF-8", 1);
     fclose(fp);
     xmlFreeDoc(doc);
-    xmlCleanupParser();
+    //xmlCleanupParser();
   }
 }
 
