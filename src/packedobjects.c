@@ -1291,6 +1291,7 @@ xmlDocPtr packedobjects_decode(packedobjectsContext *pc, char *pdu)
     // add a temporary root for convenience
     data_node = xmlNewNode(NULL, BAD_CAST "root");  
     decode_node(pc, data_node, schema_node);
+    freeDecode(pc->decodep);
     dbg("creating XML data:");
     doc_data = xmlNewDoc(BAD_CAST "1.0");
     // ignore the temporary root
