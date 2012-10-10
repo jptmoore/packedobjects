@@ -71,7 +71,9 @@ static char numchar[] = {
   '7',
   '8',
   '9',
-  '.'
+  '.',
+  '+',
+  '-'
 };
 
 	
@@ -393,6 +395,10 @@ void encodeFixedLengthNumericString(packedEncode *memBuf, char *s, int len) {
       encode(memBuf, c - '0', FOUR_BIT);
     else if (c == '.')
       encode(memBuf, 10, FOUR_BIT);
+    else if (c == '+')
+      encode(memBuf, 11, FOUR_BIT);
+    else if (c == '-')
+      encode(memBuf, 12, FOUR_BIT);
     else {
       alert("Unsupported character");
     }
@@ -444,6 +450,10 @@ void encodeConstrainedNumericString(packedEncode *memBuf, char *s, int lb, int u
       encode(memBuf, c - '0', FOUR_BIT);
     else if (c == '.')
       encode(memBuf, 10, FOUR_BIT);
+    else if (c == '+')
+      encode(memBuf, 11, FOUR_BIT);
+    else if (c == '-')
+      encode(memBuf, 12, FOUR_BIT);
     else {
       alert("Unsupported character"); 
     }
@@ -495,6 +505,10 @@ void encodeSemiConstrainedNumericString(packedEncode *memBuf, char *s) {
       encode(memBuf, c - '0', FOUR_BIT);
     else if (c == '.')
       encode(memBuf, 10, FOUR_BIT);
+    else if (c == '+')
+      encode(memBuf, 11, FOUR_BIT);
+    else if (c == '-')
+      encode(memBuf, 12, FOUR_BIT);
     else {
       alert("Unsupported character"); 
     }
