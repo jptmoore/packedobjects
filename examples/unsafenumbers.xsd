@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
+  
+  <xs:complexType name="generalIntegers">
+    <xs:choice>
+      <xs:element name="short" type="integer"/>
+      <xs:element name="long" type="integer"/>
+      <xs:element name="verylong" type="integer"/>
+      <xs:element name="negativeshort" type="integer"/>
+      <xs:element name="negativelong" type="integer"/>
+      <xs:element name="negativeverylong" type="integer"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="generalDecimals">
+    <xs:choice>
+      <xs:element name="short" type="decimal"/>
+      <xs:element name="long" type="decimal"/>
+      <xs:element name="verylong" type="decimal"/>
+      <xs:element name="negativeshort" type="decimal"/>
+      <xs:element name="negativelong" type="decimal"/>
+      <xs:element name="negativeverylong" type="decimal"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="setType">
+    <xs:choice>
+      <xs:element name="integers" type="generalIntegers"/>
+      <xs:element name="decimals" type="generalDecimals"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:element name="system">
+    <xs:complexType>
+      <xs:sequence>
+	<xs:element name="sets" type="setType" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
