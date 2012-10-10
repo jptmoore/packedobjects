@@ -222,7 +222,7 @@ xmlChar *get_sequence_type(xmlNodePtr node)
   np = node;
   while (np) {
     value = xmlGetProp(np, BAD_CAST "maxOccurs");
-    if (xmlStrEqual(value, BAD_CAST "unbounded")) {
+    if (value) {
       xmlFree(value);
       type = BAD_CAST "sequence-of";
       break;
@@ -261,9 +261,17 @@ static xmlNodePtr make_complex_type(xmlNodePtr node)
     if (xmlStrEqual(sequence_type, BAD_CAST "sequence-of")) {
       char items[11];
       unsigned long n = xmlChildElementCount(np->parent);
+      xmlChar *minOccurs = NULL;
+      xmlChar *maxOccurs = NULL;
       sprintf(items, "%lu", n);
       xmlNewProp(new_node, BAD_CAST "type", BAD_CAST "sequence-of");
       xmlNewProp(new_node, BAD_CAST "items", BAD_CAST items);
+      minOccurs = xmlGetProp(np, BAD_CAST "minOccurs");
+      xmlNewProp(new_node, BAD_CAST "minOccurs", minOccurs);
+      maxOccurs = xmlGetProp(np, BAD_CAST "maxOccurs");
+      xmlNewProp(new_node, BAD_CAST "maxOccurs", maxOccurs);
+      xmlFree(minOccurs);
+      xmlFree(maxOccurs);
     } else if (xmlStrEqual(sequence_type, BAD_CAST "sequence-optional")) {
       char items[11];
       unsigned long n = xmlChildElementCount(np->parent);

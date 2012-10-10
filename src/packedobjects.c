@@ -501,16 +501,34 @@ static void encode_sequence(packedobjectsContext *pc, xmlNodePtr data_node, xmlN
 static void encode_sequence_of(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node)
 {
   xmlChar *items = NULL;
+  xmlChar *minOccurs = NULL;
+  xmlChar *maxOccurs = NULL;
   unsigned long n = 0;
+  unsigned long lb = 0;
 
+  minOccurs = xmlGetProp(schema_node, BAD_CAST "minOccurs");
+  maxOccurs = xmlGetProp(schema_node, BAD_CAST "maxOccurs");
   // number of items in the sequence according to the schema
   items = xmlGetProp(schema_node, BAD_CAST "items");
   n = atoi((const char *) items);
+  xmlFree(items);
   // work out how many times data repeats
   n = xmlChildElementCount(data_node) / n;
   dbg("sequence_of len:%d", n);
-  encodeSequenceOfLength(pc->encodep, n);
-  xmlFree(items);
+  // overide default of 0 if set
+  if (minOccurs) lb = atoi((const char *) minOccurs);
+  dbg("lb:%lu", lb);
+  if (xmlStrEqual(maxOccurs, BAD_CAST "unbounded")) {
+     // encode as semi-constrained
+    encodeUnsignedSemiConstrainedInteger(pc->encodep, n, lb);
+  } else {
+    // encode as constrained
+    unsigned long ub = atoi((const char *) maxOccurs);
+    dbg("ub:%lu", ub);
+    encodeUnsignedConstrainedInteger(pc->encodep, n, lb, ub);
+  }
+  xmlFree(minOccurs);
+  xmlFree(maxOccurs);
 
 }
 
@@ -816,8 +834,27 @@ static void decode_sequence(packedobjectsContext *pc, xmlNodePtr data_node, xmlN
 static void decode_sequence_of(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node)
 {
   xmlNodePtr np = NULL;
-  int i, len;
-  len = decodeSequenceOfLength(pc->decodep);
+  unsigned long i, len;
+  xmlChar *minOccurs = NULL;
+  xmlChar *maxOccurs = NULL;
+  unsigned long lb = 0;
+
+  minOccurs = xmlGetProp(schema_node, BAD_CAST "minOccurs");
+  maxOccurs = xmlGetProp(schema_node, BAD_CAST "maxOccurs");
+  // overide default of 0 if set
+  if (minOccurs) lb = atoi((const char *) minOccurs);  
+  dbg("lb:%lu", lb);
+  if (xmlStrEqual(maxOccurs, BAD_CAST "unbounded")) {
+     // decode as semi-constrained
+    len = decodeUnsignedSemiConstrainedInteger(pc->decodep, lb);
+  } else {
+    // decode as constrained
+    unsigned long ub = atoi((const char *) maxOccurs);
+    dbg("ub:%lu", ub);
+    len = decodeUnsignedConstrainedInteger(pc->decodep, lb, ub);
+  }
+  xmlFree(minOccurs);
+  xmlFree(maxOccurs);  
   dbg("sequence_of len:%d", len);
   np = xmlAddChild(data_node, xmlCopyNode(schema_node, 0));
   for (i=0; i<len; i++) {
