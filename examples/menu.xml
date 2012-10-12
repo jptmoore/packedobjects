@@ -1,49 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kiosk>
   <order>
-    <menu>
-      <meal>
-	<breakfast>
-	  <name>Early Bird</name>
-	  <items>
-	    <beverage>Latte</beverage>
-	    <main>Smoked Salmon and Egg Scramble</main>
-	    <sides>
-	      <side>Tomatoes</side>
-	      <side>Eggs</side>
-	      <side>Apricots</side>
-	    </sides>
-	  </items>
-	</breakfast>
-      </meal>
-      <meal>
-	<breakfast>
-	  <name>Full English</name>
-	  <items>
-	    <beverage>Americano</beverage>
-	    <main>Egg Scramble and Smoked Bacon</main>
-	    <sides>
-	      <side>Tortilla</side>
-	      <side>Beans</side>
-	      <side>Cheese</side>
-	    </sides>
-	  </items>
-	</breakfast>
-      </meal>
-      <meal>
-	<lunch>
-	  <name>Panini Sandwich</name>
-	  <items>
-	    <beverage>Beer</beverage>
-	    <main>Ham and Cheese Panini</main>
-	    <sides>
-	      <side>Chips</side>
-	      <side>Cheese</side>
-	      <side>Souces</side>
-	    </sides>
-	  </items>
-	</lunch>
-      </meal>
-    </menu>
+    <breakfast>
+      <name>Early Bird</name>
+      <items>
+        <beverage>Latte</beverage>
+        <main>Smoked Salmon and Egg Scramble</main>
+        <sides>
+          <side>Tomatoes</side>
+          <side>Eggs</side>
+          <side>Apricots</side>
+        </sides>
+      </items>
+    </breakfast>
+  </order>
+  <order>
+    <breakfast>
+      <name>Full English</name>
+      <items>
+        <beverage>Americano</beverage>
+        <main>Egg Scramble and Smoked Bacon</main>
+        <sides>
+          <side>Tortilla</side>
+          <side>Beans</side>
+          <side>Cheese</side>
+        </sides>
+      </items>
+    </breakfast>
+  </order>
+  <order>
+    <lunch>
+      <name>Panini Sandwich</name>
+      <items>
+        <beverage>Beer</beverage>
+        <main>Ham and Cheese Panini</main>
+        <sides>
+          <side>Chips</side>
+          <side>Cheese</side>
+          <side>Souces</side>
+        </sides>
+      </items>
+      </lunch>
   </order>
 </kiosk>

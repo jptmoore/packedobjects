@@ -75,24 +75,12 @@
       </xs:choice>
   </xs:complexType>
 
-  <xs:complexType name="kiosktype">
+  <xs:complexType name="order">
     <xs:sequence>
-      <xs:element name="order">
-	<xs:complexType>
-	  <xs:sequence>
-	    <xs:element name="menu">
-	      <xs:complexType>
-		<xs:sequence>
-		  <xs:element name="meal" type="mealtype" minOccurs="1" maxOccurs="10" />
-		</xs:sequence>
-	      </xs:complexType>
-	    </xs:element>
-	  </xs:sequence>
-	</xs:complexType>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
+      <xs:element name="order" type="mealtype" minOccurs="1" maxOccurs="10"/>
+      </xs:sequence>
+    </xs:complexType>
   
-  <xs:element name="kiosk" type="kiosktype"/>
+  <xs:element name="kiosk" type="order"/>
   
 </xs:schema>
