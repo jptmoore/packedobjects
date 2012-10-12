@@ -18,7 +18,6 @@
     <breakfast>
       <name>Full English</name>
       <items>
-        <beverage>Americano</beverage>
         <main>Egg Scramble and Smoked Bacon</main>
         <sides>
           <side>Tortilla</side>
@@ -34,11 +33,6 @@
       <items>
         <beverage>Beer</beverage>
         <main>Ham and Cheese Panini</main>
-        <sides>
-          <side>Chips</side>
-          <side>Cheese</side>
-          <side>Souces</side>
-        </sides>
       </items>
       </lunch>
   </order>

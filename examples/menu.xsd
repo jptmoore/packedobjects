@@ -23,7 +23,7 @@
 
   <xs:complexType name="itemstype">
     <xs:sequence>
-      <xs:element name="beverage">
+      <xs:element name="beverage" minOccurs="0">
 	<xs:simpleType>                                         
 	  <xs:restriction base="enumerated">                        
             <xs:enumeration value="Latte" />                          
@@ -34,7 +34,7 @@
           </xs:restriction>          
         </xs:simpleType>             
       </xs:element>
-      <xs:element name="main">
+      <xs:element name="main" minOccurs="0">
 	<xs:simpleType>                                         
 	  <xs:restriction base="enumerated">                        
             <xs:enumeration value="Smoked Salmon and Egg Scramble" />                          
@@ -45,7 +45,7 @@
           </xs:restriction>          
         </xs:simpleType>             
       </xs:element>
-      <xs:element name="sides" type="sidestype"/>
+      <xs:element name="sides" minOccurs="0" type="sidestype"/>
     </xs:sequence>
   </xs:complexType>
 
