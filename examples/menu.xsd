@@ -83,7 +83,7 @@
 	    <xs:element name="menu">
 	      <xs:complexType>
 		<xs:sequence>
-		  <xs:element name="meal" type="mealtype" maxOccurs="unbounded" />
+		  <xs:element name="meal" type="mealtype" minOccurs="1" maxOccurs="10" />
 		</xs:sequence>
 	      </xs:complexType>
 	    </xs:element>
