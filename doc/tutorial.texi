@@ -141,7 +141,7 @@ You first must initialise the library using your XML Schema. Typical use would b
     
 If during runtime your schema changed you must call the init function again with the new file. The library is designed to do preprocessing of the schema during the init function which then allows efficient encoding and decoding plus validation to take place. Therefore, do not call init_packedobjects more than once if you do not plan on supporting dynamically changing protocols at runtime.
 
-To build an application with the software you must link with the library. Using autoconf you can add @code{PKG_CHECK_MODULES([LIBPACKEDOBJECTS], [libpackedobjects])} to your configure.ac file and then use the variables @code{$(LIBPACKEDOBJECTS_CFLAGS)} and @code{$(PACKEDOBJECTS_LIBS)} in your Makefile.am file.
+To build an application with the software you must link with the library. Using autoconf you can add @code{PKG_CHECK_MODULES([LIBPACKEDOBJECTS], [libpackedobjects])} to your configure.ac file and then use the variables @code{$(LIBPACKEDOBJECTS_CFLAGS)} and @code{$(LIBPACKEDOBJECTS_LIBS)} in your Makefile.am file.
 
 @section Writing a schema
 @cindex Writing a schema
