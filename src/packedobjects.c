@@ -607,9 +607,13 @@ static void encode_enumerated(packedobjectsContext *pc, xmlNodePtr data_node, xm
   for(attr = snp->properties; NULL != attr; attr = attr->next) {
     if (xmlStrEqual(attr->name, BAD_CAST "enumeration")) {
       schema_value = xmlNodeListGetString(pc->doc_canonical_schema, attr->children, 1);
-      if (xmlStrEqual(data_value, schema_value)) break;  
-      xmlFree(schema_value);
-      index++;
+      if (xmlStrEqual(data_value, schema_value)) {
+        xmlFree(schema_value);
+        break;
+      } else {
+        xmlFree(schema_value);
+        index++;
+      }
     }
   }
   xmlFree(data_value);
