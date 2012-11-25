@@ -138,7 +138,69 @@ void free_packedobjects(packedobjectsContext *poCtxPtr);
 @end smallexample
 @noindent
 You first must initialise the library using your XML Schema. Typical use would be one called to init_packedobjects at startup and then multiple calls to encode/decode based on your protocol. The interface to the packedobjects_encode function requires a libxml2 doc type. The packedobjects_decode function returns a libxml2 doc type.
-    
+@noindent
+A very simple program demonstrating the API is as follows:
+@smallformat
+@verbatim
+#include <stdio.h>
+#include <packedobjects/packedobjects.h>
+
+#define XML_DATA "helloworld.xml"
+#define XML_SCHEMA "helloworld.xsd"
+
+int main()
+{
+  packedobjectsContext *pc = NULL;
+  xmlDocPtr doc = NULL;
+  char *pdu = NULL;
+
+  ///////////////////// Initialising ///////////////////
+  
+  // initialise packedobjects
+  if ((pc = init_packedobjects(XML_SCHEMA)) == NULL) {
+    printf("failed to initialise libpackedobjects");
+    exit(1);
+  }
+
+  ////////////////////// Encoding //////////////////////
+  
+  // create an XML DOM
+  if ((doc = packedobjects_new_doc(XML_DATA)) == NULL) {
+    printf("did not find .xml file");
+    exit(1);
+  }
+  // encode the XML DOM
+  pdu = packedobjects_encode(pc, doc);
+  if (pc->bytes == -1) {
+    printf("Failed to encode with error %d.\n", pc->encode_error);
+    exit(1);
+  }
+  // free the DOM
+  xmlFreeDoc(doc);
+
+  ////////////////////// Decoding //////////////////////
+  
+  // decode the PDU into DOM
+  doc = packedobjects_decode(pc, pdu);
+  if (pc->decode_error) {
+    printf("Failed to decode with error %d.\n", pc->decode_error);
+    exit(1);
+  }
+  // output the DOM for checking
+  packedobjects_dump_doc(doc);
+  // free the DOM
+  xmlFreeDoc(doc);
+
+  ////////////////////// Freeing //////////////////////
+
+  // free memory created by packedobjects
+  free_packedobjects(pc);
+  
+  return 0;
+}
+@end verbatim
+@end smallformat
+
 If during runtime your schema changed you must call the init function again with the new file. The library is designed to do preprocessing of the schema during the init function which then allows efficient encoding and decoding plus validation to take place. Therefore, do not call init_packedobjects more than once if you do not plan on supporting dynamically changing protocols at runtime.
 
 To build an application with the software you must link with the library. Using autoconf you can add @code{PKG_CHECK_MODULES([LIBPACKEDOBJECTS], [libpackedobjects])} to your configure.ac file and then use the variables @code{$(LIBPACKEDOBJECTS_CFLAGS)} and @code{$(LIBPACKEDOBJECTS_LIBS)} in your Makefile.am file.
