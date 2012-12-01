@@ -1,0 +1,260 @@
+<?xml version="1.0"?>
+<!--Created by:Olayinka Dauda Email:21161937@student.uwl.ac.uk Student at University of West London-->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd"/>
+  <!--******************Global Variables*********************--> 
+  
+  <xs:complexType name="DateRestriction">
+    <xs:sequence>
+      <xs:element name="Year">
+	<xs:simpleType>
+	  <xs:restriction base="integer">
+	    <xs:minInclusive value="1900"/>
+	  </xs:restriction>
+	</xs:simpleType>
+      </xs:element>
+      <xs:element name="Month">
+	<xs:simpleType>
+	  <xs:restriction base="integer">
+	    <xs:maxInclusive value="12"/>
+	  </xs:restriction>
+	</xs:simpleType>
+      </xs:element>
+      <xs:element name="Day">
+	<xs:simpleType> 
+	  <xs:restriction base="integer">
+	    <xs:maxInclusive value="31"/>
+	  </xs:restriction>
+	</xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Details">
+    <xs:sequence>
+      <xs:element name="EmployeeNumber">
+	<xs:simpleType>
+	  <xs:restriction base="numeric-string">
+	    <xs:length value="5"/>
+	  </xs:restriction>
+	</xs:simpleType>
+      </xs:element> 
+      <xs:element name="Name">
+	<xs:complexType>
+	  <xs:sequence>
+	    <xs:element name="GivenName" type="string"/>
+	    <xs:element name="Initial">
+	      <xs:simpleType>		
+		<xs:restriction base="string">
+		  <xs:maxLength value="1"/>
+		</xs:restriction>
+	      </xs:simpleType>
+	    </xs:element>
+	    <xs:element name="FamilyName" type="string"/>
+	  </xs:sequence>
+	</xs:complexType>
+      </xs:element>
+      <xs:element name="Department">
+	<xs:simpleType>
+	  <xs:restriction base="enumerated">
+	    <xs:enumeration value="ProductionPlant"/>
+	    <xs:enumeration value="ShowRoom"/>
+	    <xs:enumeration value="HeadOffice"/>
+	    <xs:enumeration value="CallOut"/>
+	  </xs:restriction>
+	</xs:simpleType>
+      </xs:element> 
+      <xs:element name="Dateofhire" type="DateRestriction"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Location">
+    <xs:sequence>
+      <xs:element name="StreetNo" type="integer"/>
+      <xs:element name="FirstLine" type="string"/>
+      <xs:element name="SecondLine" type="string"/>
+      <xs:element name="Country" type="string"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+
+
+  <xs:complexType name="ShowRoom-Type">
+    <xs:sequence>
+      <xs:element name="ShowRoom-Details" maxOccurs="unbounded">
+	<xs:complexType>
+	  <xs:sequence>
+	    <xs:element name="ShowRoomName" type="string"/>
+	    <xs:element name="Address" type="Location"/>
+	    <xs:element name="NumberofCars" type="integer"/>
+	  </xs:sequence>
+	</xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+
+  <xs:complexType name="ProductionPlant-Type">
+    <xs:sequence>
+      <xs:element name="ProductionPlant-Details" maxOccurs="unbounded">
+	<xs:complexType>
+	  <xs:sequence>
+	    <xs:element name="PlantName" type="string"/>
+	    <xs:element name="Address" type="Location"/>
+	    <xs:element name="ProductionCar" type="string"/>
+	    <xs:element name="NumberofCarsProduced" type="integer"/>
+	  </xs:sequence>
+	</xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Affiliates-Type">
+    <xs:sequence>
+      <xs:element name="ShowRoom" type="ShowRoom-Type"/>
+      <xs:element name="ProductionPlant" type="ProductionPlant-Type"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Manager-Type">
+    <xs:sequence>
+      <xs:element name="Manager-Details" maxOccurs="unbounded" >
+	<xs:complexType>
+	  <xs:sequence>
+	    <xs:element name="EmployeeDetails" type="Details"/>   
+	    <xs:element name="Salary" type="currency"/>
+	    <xs:element name="ShowRoomManager" type="boolean"/>
+	    <xs:element name="ProductionLineManager" type="boolean"/>
+	  </xs:sequence>
+	</xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Supervisor-Type">
+    <xs:sequence>
+      <xs:element name="Supervisor-Details" maxOccurs="unbounded">
+	<xs:complexType>
+	  <xs:sequence>
+	    <xs:element name="EmployeeDetails" type="Details"/>  
+	    <xs:element name="Section" type="string"/>
+	    <xs:element name="Salary" type="currency"/>
+	  </xs:sequence>
+	</xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="ProductionWorker-Type">
+    <xs:sequence>
+      <xs:element name="ProductionWorker-Details" maxOccurs="unbounded">
+	<xs:complexType>
+	  <xs:sequence>
+	    <xs:element name="EmployeeDetails" type="Details"/>
+	    <xs:element name="Section" type="string"/>
+	    <xs:element name="Hours" type="integer"/>
+	    <xs:element name="HourlyRate">
+	      <xs:simpleType>
+		<xs:restriction base="currency">
+		  <xs:minInclusive value="6.90"/>
+		</xs:restriction>
+	      </xs:simpleType>
+	    </xs:element>
+	  </xs:sequence>
+	</xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="staff-type">
+    <xs:sequence>
+      <xs:element name="Manager" type="Manager-Type"/>
+      <xs:element name="Supervisor" type="Supervisor-Type"/>
+      <xs:element name="ProductionWorker" type="ProductionWorker-Type"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="VehicleType">
+    <xs:sequence>
+      <xs:element name="Type">
+	<xs:simpleType>
+	  <xs:restriction base="enumerated">
+	    <xs:enumeration value="Coupe"/>
+	    <xs:enumeration value="Saloon"/>
+	    <xs:enumeration value="MPV"/>
+	    <xs:enumeration value="Estate"/>
+	  </xs:restriction>
+	</xs:simpleType>
+      </xs:element>	
+    </xs:sequence>
+  </xs:complexType>	    
+  
+  <xs:complexType name="Vehicle-Details">
+    <xs:sequence>
+      <xs:element name="Vehicle" maxOccurs="unbounded">
+	<xs:complexType>
+	  <xs:sequence>
+	    <xs:element name="CarName" type="string"/>
+	    <xs:element name="CarType" type="VehicleType"/>
+	    <xs:element name="ProductionDate" type="DateRestriction"/>
+	    <xs:element name="RegistrationNumber" type="string"/>
+	    <xs:element name="Condition">
+	      <xs:simpleType>
+		<xs:restriction base="enumerated">
+		  <xs:enumeration value="New"/>
+		  <xs:enumeration value="Used"/>
+		</xs:restriction>
+	      </xs:simpleType>
+	    </xs:element>  
+	    <xs:element name="Milage" type="integer"/>    
+	    <xs:element name="Transmition">
+	      <xs:simpleType>
+		<xs:restriction base="enumerated">
+		  <xs:enumeration value="Manual"/>
+		  <xs:enumeration value="Automatic"/>
+		</xs:restriction>
+	      </xs:simpleType>
+	    </xs:element>
+	    <xs:element name="EngineSize">
+	      <xs:simpleType>
+		<xs:restriction base="decimal">
+		  <xs:minInclusive value="1.2"/>
+		</xs:restriction>
+	      </xs:simpleType>
+	    </xs:element>
+	    <xs:element name="NumberofDoors">
+	      <xs:simpleType>
+		<xs:restriction base="integer">
+		  <xs:minInclusive value="2"/>
+		  <xs:maxInclusive value="5"/>
+		</xs:restriction>
+	      </xs:simpleType>
+	    </xs:element>     
+	    <xs:element name="TopSpeed" type="integer"/>
+	    <xs:element name="ZerotoSixty" type="decimal"/>    
+	    <xs:element name="Gears">
+	      <xs:simpleType>
+		<xs:restriction base="integer">
+		  <xs:minInclusive value="4"/>
+		  <xs:maxInclusive value="6"/>
+		</xs:restriction>
+	      </xs:simpleType>
+	    </xs:element>	  
+	  </xs:sequence> 
+	</xs:complexType>
+      </xs:element>
+    </xs:sequence> 
+  </xs:complexType>
+  
+  <!-- ***************************Root Element***************************-->
+  <xs:element name="Vauxhall">
+    <xs:complexType>
+      <xs:sequence>
+	<xs:element name="Vehicle-info" type="Vehicle-Details"/>	
+	<xs:element name="Staff" type="staff-type"/>
+	<xs:element name="Affiliates" type="Affiliates-Type"/>
+      </xs:sequence>
+    </xs:complexType> 
+  </xs:element>
+</xs:schema>
