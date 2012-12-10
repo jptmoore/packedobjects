@@ -1,186 +1,204 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--Created by:Olayinka Dauda Email:21161937@student.uwl.ac.uk Student at University of West London-->
-<Vauxhall>
-  <Vehicle-info>
-    <Vehicle>
-      <CarName>Astra</CarName>
-      <CarType>
-	<Type>Coupe</Type>
-      </CarType>
-      <ProductionDate>
-	<Year>2012</Year>
-	<Month>12</Month>
-	<Day>26</Day>
-      </ProductionDate>  
-      <RegistrationNumber>DV61XEN</RegistrationNumber>
-      <Condition>Used</Condition>
-      <Milage>8000</Milage>
-      <Transmition>Manual</Transmition>
-      <EngineSize>1.4</EngineSize>
-      <NumberofDoors>4</NumberofDoors>
-      <TopSpeed>180</TopSpeed>
-      <ZerotoSixty>4.3</ZerotoSixty>
-      <Gears>5</Gears>
-    </Vehicle>
-    
-    <Vehicle>
-      <CarName>Vectra</CarName>
-      <CarType>
-	<Type>Saloon</Type>
-      </CarType>
-      <ProductionDate>
-	<Year>2012</Year>
-	<Month>12</Month>
-	<Day>26</Day>
-      </ProductionDate>  
-      <RegistrationNumber>NP05YIN</RegistrationNumber>
-      <Condition>Used</Condition>
-      <Milage>4000</Milage>
-      <Transmition>Automatic</Transmition>
-      <EngineSize>1.4</EngineSize>
-      <NumberofDoors>4</NumberofDoors>
-      <TopSpeed>160</TopSpeed>
-      <ZerotoSixty>5.8</ZerotoSixty>
-      <Gears>5</Gears>
-    </Vehicle>
-  </Vehicle-info>
-
-  <Staff>
-    <Manager>
-      <Manager-Details>
-	<EmployeeDetails>
-	  <EmployeeNumber>10000</EmployeeNumber>
-	  <Name>
-	    <GivenName>John</GivenName>
-	    <Initial>P</Initial>
-	    <FamilyName>smith</FamilyName>
-	  </Name>
-	  <Department>ProductionPlant</Department>
-	  <Dateofhire>
-	    <Year>2005</Year>
-	    <Month>06</Month>
-	    <Day>11</Day>
-	  </Dateofhire>
-	</EmployeeDetails>
-	<Salary>50000.00</Salary>
-	<ShowRoomManager>true</ShowRoomManager>
-	<ProductionLineManager>true</ProductionLineManager>
-      </Manager-Details>
-    </Manager>
-
-    <Supervisor>
-      <Supervisor-Details>
-	<EmployeeDetails>
-	  <EmployeeNumber>20000</EmployeeNumber>
-	  <Name>
-	    <GivenName>John</GivenName>
-	    <Initial>W</Initial>
-	    <FamilyName>smith</FamilyName>
-	  </Name>
-	  <Department>ShowRoom</Department>
-	  <Dateofhire>
-	    <Year>1999</Year>
-	    <Month>11</Month>
-	    <Day>26</Day>
-	  </Dateofhire>
-	</EmployeeDetails>
-	<Section>electronics</Section>
-	<Salary>30000.00</Salary>
-      </Supervisor-Details>
-    </Supervisor>
-
-    <ProductionWorker>
-      <ProductionWorker-Details>
-	<EmployeeDetails>
-	  <EmployeeNumber>11111</EmployeeNumber>
-	  <Name>
-	    <GivenName>Dave</GivenName>
-	    <Initial>M</Initial>
-	    <FamilyName>Hodge</FamilyName>
-	  </Name>
-	  <Department>ProductionPlant</Department>
-	  <Dateofhire>
-	    <Year>1999</Year>
-	    <Month>11</Month>
-	    <Day>26</Day>
-	  </Dateofhire>
-	</EmployeeDetails>
-	<Section>electronics</Section>
-	<Hours>40</Hours>
-	<HourlyRate>8.00</HourlyRate>
-      </ProductionWorker-Details>
+<!--
+Created by:Olayinka J Dauda 
+Email:21161937@student.uwl.ac.uk 
+Student at University of West London
+-->
+<Company>
+  <Vauxhall>
+    <Vehicle-info>
+      <Vehicle>
+	<CarName>Astra</CarName>
+	<CarType>
+	  <Type>Coupe</Type>
+	</CarType>
+	<ProductionDate>
+	  <Year>2012</Year>
+	  <Month>12</Month>
+	  <Day>26</Day>
+	</ProductionDate>  
+	<RegistrationNumber>DV61XEN</RegistrationNumber>
+	<Condition>Used</Condition>
+	<Milage>8000</Milage>
+	<Transmition>Manual</Transmition>
+	<EngineSize>1.4</EngineSize>
+	<NumberofDoors>4</NumberofDoors>
+	<TopSpeed>180</TopSpeed>
+	<ZerotoSixty>4.3</ZerotoSixty>
+	<Gears>5</Gears>
+      </Vehicle>
       
-      <ProductionWorker-Details>
-	<EmployeeDetails>
-	  <EmployeeNumber>66666</EmployeeNumber>
-	  <Name>
-	    <GivenName>Bobby</GivenName>
-	    <Initial>J</Initial>
-	    <FamilyName>Hunt</FamilyName>
-	  </Name>
-	  <Department>ProductionPlant</Department>
-	  <Dateofhire>
-	    <Year>1991</Year>
-	    <Month>1</Month>
-	    <Day>26</Day>
-	  </Dateofhire>
-	</EmployeeDetails>
-	<Section>Mechanics</Section>
-	<Hours>35</Hours>
-	<HourlyRate>15.00</HourlyRate>
-      </ProductionWorker-Details>
-    </ProductionWorker>
-  </Staff>
+      <Vehicle>
+	<CarName>Vectra</CarName>
+	<CarType>
+	  <Type>Saloon</Type>
+	</CarType>
+	<ProductionDate>
+	  <Year>2012</Year>
+	  <Month>12</Month>
+	  <Day>26</Day>
+	</ProductionDate>  
+	<RegistrationNumber>NP05YIN</RegistrationNumber>
+	<Condition>Used</Condition>
+	<Milage>4000</Milage>
+	<Transmition>Automatic</Transmition>
+	<EngineSize>1.4</EngineSize>
+	<NumberofDoors>4</NumberofDoors>
+	<TopSpeed>160</TopSpeed>
+	<ZerotoSixty>5.8</ZerotoSixty>
+	<Gears>5</Gears>
+      </Vehicle>
+    </Vehicle-info>
 
-  <Affiliates>
-    <ShowRoom>
-      <ShowRoom-Details>
-	<ShowRoomName>Ealing Cars</ShowRoomName>
-	<Address>
-	  <StreetNo>2</StreetNo>
-	  <FirstLine>Ealing</FirstLine>
-	  <SecondLine>London</SecondLine>
-	  <Country>United Kingdom</Country>
-	</Address>
-	<NumberofCars>400</NumberofCars>
-      </ShowRoom-Details>
+    <Staff>
+      <Managers>
+	<Manager-Details>
+	  <EmployeeDetails>
+	    <EmployeeNumber>10000</EmployeeNumber>
+	    <Name>
+	      <GivenName>John</GivenName>
+	      <Initial>P</Initial>
+	      <FamilyName>smith</FamilyName>
+	    </Name>
+	    <Department>
+	      <DepartmentName>ProductionPlant</DepartmentName>
+	    </Department>
+	    <Dateofhire>
+	      <Year>2005</Year>
+	      <Month>06</Month>
+	      <Day>11</Day>
+	    </Dateofhire>
+	  </EmployeeDetails>
+	  <Salary>50000.00</Salary>
+	  <ShowRoomManager>true</ShowRoomManager>
+	  <ProductionLineManager>true</ProductionLineManager>
+	</Manager-Details>
+      </Managers>
+
+      <Supervisors>
+	<Supervisor-Details>
+	  <EmployeeDetails>
+	    <EmployeeNumber>20000</EmployeeNumber>
+	    <Name>
+	      <GivenName>John</GivenName>
+	      <Initial>W</Initial>
+	      <FamilyName>smith</FamilyName>
+	    </Name>
+	    <Department>
+	      <DepartmentName>ShowRoom</DepartmentName>
+	    </Department>
+	    <Dateofhire>
+	      <Year>1999</Year>
+	      <Month>11</Month>
+	      <Day>26</Day>
+	    </Dateofhire>
+	  </EmployeeDetails>
+	  <Section>electronics</Section>
+	  <Salary>30000.00</Salary>
+	</Supervisor-Details>
+      </Supervisors>
+
+      <ProductionWorkers>
+	<ProductionWorker-Details>
+	  <EmployeeDetails>
+	    <EmployeeNumber>11111</EmployeeNumber>
+	    <Name>
+	      <GivenName>Dave</GivenName>
+	      <Initial>M</Initial>
+	      <FamilyName>Hodge</FamilyName>
+	    </Name>
+	    <Department>
+	      <DepartmentName>ProductionPlant</DepartmentName>
+	    </Department>
+	    <Dateofhire>
+	      <Year>1999</Year>
+	      <Month>11</Month>
+	      <Day>26</Day>
+	    </Dateofhire>
+	  </EmployeeDetails>
+	  <Section>electronics</Section>
+	  <ContractedHours>40</ContractedHours>
+	  <HourlyRate>8.00</HourlyRate>
+	</ProductionWorker-Details>
+	
+	<ProductionWorker-Details>
+	  <EmployeeDetails>
+	    <EmployeeNumber>66666</EmployeeNumber>
+	    <Name>
+	      <GivenName>Bobby</GivenName>
+	      <Initial>J</Initial>
+	      <FamilyName>Hunt</FamilyName>
+	    </Name>
+	    <Department>
+	      <DepartmentName>ProductionPlant</DepartmentName>
+	    </Department>
+	    <Dateofhire>
+	      <Year>1991</Year>
+	      <Month>1</Month>
+	      <Day>26</Day>
+	    </Dateofhire>
+	  </EmployeeDetails>
+	  <Section>Mechanics</Section>
+	  <ContractedHours>35</ContractedHours>
+	  <HourlyRate>15.00</HourlyRate>
+	</ProductionWorker-Details>
+      </ProductionWorkers>
+    </Staff>
+
+    <Affiliates>
+      <ShowRooms>
+	<ShowRoom-Details>
+	  <ShowRoomName>Ealing Cars</ShowRoomName>
+	  <Address>
+	    <StreetNo>2</StreetNo>
+	    <FirstLine>Ealing</FirstLine>
+	    <SecondLine>London</SecondLine>
+	    <Country>United Kingdom</Country>
+	  </Address>
+	  <NumberofCars>400</NumberofCars>
+	</ShowRoom-Details>
+	
+	<ShowRoom-Details>
+	  <ShowRoomName>Vauxhall Cars</ShowRoomName>
+	  <Address>
+	    <StreetNo>50</StreetNo>
+	    <FirstLine>Oxford Street</FirstLine>
+	    <SecondLine>London</SecondLine>
+	    <Country>United Kingdom</Country>
+	  </Address>
+	  <NumberofCars>400</NumberofCars>
+	</ShowRoom-Details>
+      </ShowRooms>
       
-      <ShowRoom-Details>
-	<ShowRoomName>Vauxhall Cars</ShowRoomName>
-	<Address>
-	  <StreetNo>50</StreetNo>
-	  <FirstLine>Oxford Street</FirstLine>
-	  <SecondLine>London</SecondLine>
-	  <Country>United Kingdom</Country>
-	</Address>
-	<NumberofCars>400</NumberofCars>
-      </ShowRoom-Details>
-    </ShowRoom>
-    
-    <ProductionPlant>
-      <ProductionPlant-Details>
-	<PlantName>Scotland Production Plant</PlantName>
-	<Address>
-	  <StreetNo>100</StreetNo>
-	  <FirstLine>hopeland Industrial center</FirstLine>
-	  <SecondLine>Scotland</SecondLine>
-	  <Country>United Kingdom</Country>
-	</Address>
-	<ProductionCar>Astra</ProductionCar>
-	<NumberofCarsProduced>10000</NumberofCarsProduced>
-      </ProductionPlant-Details>
-      
-      <ProductionPlant-Details>
-	<PlantName>Scotland Production Plant</PlantName>
-	<Address>
-	  <StreetNo>100</StreetNo>
-	  <FirstLine>hopeland Industrial center</FirstLine>
-	  <SecondLine>Scotland</SecondLine>
-	  <Country>United Kingdom</Country>
-	</Address>
-	<ProductionCar>Astra</ProductionCar>
-	<NumberofCarsProduced>10000</NumberofCarsProduced>
-      </ProductionPlant-Details>
-    </ProductionPlant>
-  </Affiliates>
-</Vauxhall>
+      <ProductionPlants>
+	<ProductionPlant-Details>
+	  <PlantName>Scotland Production Plant</PlantName>
+	  <Address>
+	    <StreetNo>100</StreetNo>
+	    <FirstLine>hopeland Industrial</FirstLine>
+	    <SecondLine>Scotland</SecondLine>
+	    <Country>United Kingdom</Country>
+	  </Address>
+	  <CarsProduced>
+	    <Type>MPV</Type>
+	  </CarsProduced>
+	  <NumberofCarsProduced>10000</NumberofCarsProduced>
+	</ProductionPlant-Details>
+	
+	<ProductionPlant-Details>
+	  <PlantName>Scotland Production Plant</PlantName>
+	  <Address>
+	    <StreetNo>100</StreetNo>
+	    <FirstLine>hopeland Industrial</FirstLine>
+	    <SecondLine>Scotland</SecondLine>
+	    <Country>United Kingdom</Country>
+	  </Address>
+	  <CarsProduced>
+	    <Type>Saloon</Type>
+	  </CarsProduced>
+	  <NumberofCarsProduced>10000</NumberofCarsProduced>
+	</ProductionPlant-Details>
+      </ProductionPlants>
+    </Affiliates>
+  </Vauxhall>
+</Company>
