@@ -1,0 +1,7 @@
+config BR2_PACKAGE_LIBPACKEDOBJECTS
+	bool "libpackedobjects"
+	select BR2_PACKAGE_LIBXML2
+	help
+	  XML Schema-based compression 
+
+	  http://packedobjects.org

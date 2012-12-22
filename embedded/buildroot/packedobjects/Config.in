@@ -1,0 +1,7 @@
+config BR2_PACKAGE_PACKEDOBJECTS
+	bool "packedobjects"
+	select BR2_PACKAGE_LIBPACKEDOBJECTS
+	help
+	  XML Schema-based commandline compression tool 
+
+	  http://packedobjects.org
