@@ -435,7 +435,7 @@ So in this case we saying you must include a boz item but baz items are optional
 @subsection Sequences with data that may repeat
 @cindex Sequence with data that may repeat
 
-You will often work with data that has a repeating structure. You can handle this with a special form of sequence by adding the @code{maxOccurs} attribute to element that may repeat. Using the previous example we could do the following:
+You will often work with data that has a repeating structure. In Packedobjects this means that a single child element may repeat. This child element could be a simple or complex type. You can describe this type with a special form of sequence by adding the @code{maxOccurs} attribute to child element that may repeat. Using the previous example we could do the following:
 @smallexample
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -456,7 +456,7 @@ You will often work with data that has a repeating structure. You can handle thi
 </xs:schema>
 @end smallexample
 @noindent
-In the above we have said that @code{bar} can repeat and there is no limit on how many times this might happen. Therefore, the following is valid:
+In the above we have said that @code{bar} can repeat within the its parent @code{foo} and there is no limit on how many times this might happen. Therefore, the following is valid:
 @smallexample
 <?xml version="1.0" encoding="UTF-8"?>
 <foo>
@@ -470,7 +470,7 @@ In the above we have said that @code{bar} can repeat and there is no limit on ho
 </foo>
 @end smallexample
 @noindent
-It is a good idea to specify an integer instead of ``unbounded'' when you can. We can also supply a @code{minOccurs} attribute which is useful, for example, when you want to say that there might be no items.
+It is a good idea to specify an integer instead of ``unbounded'' when you can. We can also supply a @code{minOccurs} attribute which is useful when you want to say that there might be no items.
 
 @subsection Choice
 @cindex Choice
