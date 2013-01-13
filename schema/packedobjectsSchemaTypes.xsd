@@ -59,7 +59,7 @@
   <complexType name="complexType">
     <choice>
       <element name="choice" type="choice" minOccurs="1" />
-      <element name="sequence" type="choice" minOccurs="1" />     
+      <element name="sequence" type="sequence" minOccurs="1" />
     </choice>
     <!-- depends if used in nested or flat style -->
     <attribute name="name" use="optional"/>
