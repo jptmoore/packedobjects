@@ -44,15 +44,33 @@
     <attribute name="name" use="optional"/>
   </complexType>
 
+  <!-- we will need to work out sequence kind from code -->
+  <complexType name="add_sequence_attributes">
+    <complexContent>
+      <extension base="element">
+        <attribute name="maxOccurs" use="optional"/>
+        <attribute name="minOccurs" use="optional"/>
+      </extension>
+    </complexContent>
+  </complexType>
+
+  <!-- here for consistency -->
+  <complexType name="add_choice_attributes">
+    <complexContent>
+      <extension base="element">
+      </extension>
+    </complexContent>
+  </complexType>  
+  
   <complexType name="choice">
     <sequence>
-      <element name="element" type="element" minOccurs="1" maxOccurs="unbounded" />           
+      <element name="element" type="add_choice_attributes" minOccurs="1" maxOccurs="unbounded" />           
     </sequence>
   </complexType>
 
   <complexType name="sequence">
     <sequence>
-      <element name="element" type="element" minOccurs="1" maxOccurs="unbounded" />           
+      <element name="element" type="add_sequence_attributes" minOccurs="1" maxOccurs="unbounded" />           
     </sequence>
   </complexType>  
   
@@ -73,9 +91,6 @@
     </choice>
     <attribute name="name" use="required"/>
     <attribute name="type" use="optional"/>
-    <!-- used in sequences -->
-    <attribute name="maxOccurs" use="optional"/>
-    <attribute name="minOccurs" use="optional"/>
   </complexType>
   
   <element name="schema">
