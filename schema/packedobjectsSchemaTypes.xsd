@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<schema targetNamespace="http://www.w3.org/2001/XMLSchema"
+        elementFormDefault="qualified"
+	xmlns="http://www.w3.org/2001/XMLSchema" >
+
+  <!-- http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd -->
+  <simpleType name="packedobjectsDataTypes">
+    <restriction base="token">
+      <enumeration value="string"/>
+      <enumeration value="decimal"/>
+      <enumeration value="integer"/>
+      <enumeration value="numeric-string"/>
+      <enumeration value="hex-string"/>
+      <enumeration value="bit-string"/>
+      <enumeration value="octect-string"/>
+      <enumeration value="null"/>
+      <enumeration value="enumerated"/>
+      <enumeration value="decimal"/>
+      <enumeration value="currency"/>
+      <enumeration value="ipv4-address"/>
+      <enumeration value="unix-time"/>
+      <enumeration value="utf8-string"/>
+    </restriction>
+  </simpleType>
+  
+  <complexType name="simpleType">
+    <sequence>
+      <element name="restriction">
+        <complexType>
+          <sequence>
+            <element name="length" minOccurs="0"/>
+            <element name="minLength" minOccurs="0"/>
+            <element name="maxLength" minOccurs="0"/>
+            <element name="minInclusive" minOccurs="0"/>
+            <element name="maxInclusive" minOccurs="0"/>
+            <element name="enumeration" minOccurs="0" maxOccurs="unbounded"/>
+          </sequence>
+          <attribute name="base" type="packedobjectsDataTypes" use="required"/>
+        </complexType>
+      </element>       
+    </sequence>
+    <!-- depends if used in nested or flat style -->
+    <attribute name="name" use="optional"/>
+  </complexType>
+
+  <complexType name="choice">
+    <sequence>
+      <element name="element" type="element" minOccurs="1" maxOccurs="unbounded" />           
+    </sequence>
+  </complexType>
+
+  <complexType name="sequence">
+    <sequence>
+      <element name="element" type="element" minOccurs="1" maxOccurs="unbounded" />           
+    </sequence>
+  </complexType>  
+  
+  <complexType name="complexType">
+    <choice>
+      <element name="choice" type="choice" minOccurs="1" />
+      <element name="sequence" type="choice" minOccurs="1" />     
+    </choice>
+    <!-- depends if used in nested or flat style -->
+    <attribute name="name" use="optional"/>
+  </complexType>
+
+  <complexType name="element">
+    <!-- a simpleType might not need one of these -->
+    <choice>
+      <element name="complexType" type="complexType" minOccurs="0"/>
+      <element name="simpleType" type="simpleType" minOccurs="0"/>
+    </choice>
+    <attribute name="name" use="required"/>
+    <attribute name="type" use="optional"/>
+    <!-- used in sequences -->
+    <attribute name="maxOccurs" use="optional"/>
+    <attribute name="minOccurs" use="optional"/>
+  </complexType>
+  
+  <element name="schema">
+    <complexType>
+      <sequence>
+        <!-- single include for packedobjectsDataTypes -->
+        <element name="include" minOccurs="1" maxOccurs="1" />
+        <!-- define user defined simpleTypes first -->
+        <element name="simpleType" type="simpleType" minOccurs="0" maxOccurs="unbounded"/>
+        <!-- define user defined complexTypes second -->
+        <element name="complexType" type="complexType" minOccurs="0" maxOccurs="unbounded"/>
+        <!-- single root element -->
+        <element name="element" type="element" minOccurs="1" maxOccurs="1" />
+      </sequence>
+    </complexType>
+  </element>
+
+</schema>
