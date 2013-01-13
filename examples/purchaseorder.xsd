@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
+
+  <xs:simpleType name="maxInt100">
+    <xs:restriction base="integer">
+      <xs:maxInclusive value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Date">
+    <xs:restriction base="string">
+      <xs:length value="10" />
+    </xs:restriction>
+  </xs:simpleType>
   
   <xs:complexType name="PurchaseOrderType">
     <xs:sequence>
@@ -19,18 +31,6 @@
       <xs:element name="zip"    type="numeric-string"/>
     </xs:sequence>
   </xs:complexType>
-
-  <xs:simpleType name="maxInt100">
-    <xs:restriction base="integer">
-      <xs:maxInclusive value="100"/>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="Date">
-    <xs:restriction base="string">
-      <xs:length value="10" />
-    </xs:restriction>
-  </xs:simpleType>
   
   <xs:complexType name="Items">
     <xs:sequence>
