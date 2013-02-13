@@ -17,3 +17,6 @@ packedobjects_LDADD = $(lib_LTLIBRARIES)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = $(top_builddir)/pkgconfig/libpackedobjects.pc
+
+libpackedobjectsdir = $(datarootdir)/@PACKAGE@
+libpackedobjects_DATA = ../schema/packedobjectsDataTypes.xsd ../schema/packedobjectsSchemaTypes.xsd
