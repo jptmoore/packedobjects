@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include "packedobjects.h"
 
 
@@ -8,6 +9,14 @@
 #define dbg(dummy...)
 #endif
 
+#ifdef QUIET_MODE
+#define alert(dummy...)
+#else
+#define alert(fmtstr, args...) \
+  (fprintf(stderr, PROGNAME ":%s: " fmtstr "\n", __func__, ##args))
+#endif
+
+static const char *schema_rules_file();
 
 schemaData *xml_compile_schema(xmlDoc *schema)
 {
@@ -61,4 +70,50 @@ void xml_free_schema(schemaData *schemap)
 
   free(schemap);
   
+}
+
+int xml_validate_schema_rules(xmlDocPtr doc)
+{
+  xmlDocPtr doc_schemarules = NULL;
+  schemaData *schemarulesp = NULL;
+  const char *fname = NULL;
+
+  if ((fname = schema_rules_file()) == NULL) {
+    alert("failed to find schema rules.");
+    return 1;
+  }
+
+  if ((doc_schemarules = packedobjects_new_doc(fname)) == NULL) {
+    alert("Failed to create doc.");  
+    return 1;
+  }
+  if ((schemarulesp = xml_compile_schema(doc_schemarules)) == NULL) {
+    alert("Failed to preprocess schema.");
+    xmlFreeDoc(doc_schemarules);
+    return 1;
+  }
+  if (xmlSchemaValidateDoc(schemarulesp->validCtxt, doc)) {
+    alert("Failed to validate schema.");
+    xmlFreeDoc(doc_schemarules);
+    xml_free_schema(schemarulesp);
+    return 1;
+  } 
+
+  // validation passed
+  xmlFreeDoc(doc_schemarules);
+  xml_free_schema(schemarulesp);
+  
+  return 0;
+
+}
+
+// need to try and work out where the schema rules file was installed
+static const char *schema_rules_file()
+{
+  // we only check the sensible prefixes of /usr/local and /usr
+  if ( access( "/usr/local/share/libpackedobjects", F_OK ) != -1 ) {
+    return "/usr/local/share/libpackedobjects/packedobjectsSchemaTypes.xsd";
+  } else if ( access( "/usr/share/libpackedobjects", F_OK ) != -1 ) {
+    return "/usr/share/libpackedobjects/packedobjectsSchemaTypes.xsd";
+  } else return NULL;
 }

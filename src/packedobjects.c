@@ -77,6 +77,7 @@ static void decode_ipv4address(packedobjectsContext *pc, xmlNodePtr data_node, x
 static void decode_unix_time(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 static void decode_utf8_string(packedobjectsContext *pc, xmlNodePtr data_node, xmlNodePtr schema_node);
 
+
 packedobjectsContext *init_packedobjects(const char *schema_file)
 {
   xmlDoc *doc_schema = NULL, *doc_canonical_schema = NULL;
@@ -108,6 +109,11 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
   } else {
     alert("Failed to find start element in schema.");
     return NULL;    
+  }
+ 
+  // validate the schema to make sure it conforms to packedobjects schema
+  if (xml_validate_schema_rules(doc_schema)) {
+    return NULL;
   }
   
   // setup validation context
