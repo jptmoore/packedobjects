@@ -164,6 +164,7 @@ int xml_validate_schema_sequence(xmlDocPtr doc)
     node = nodes->nodeTab[i];
     if ((xmlChildElementCount(node)) != 1) {
       alert("Repeating %s type at line %d has more than one child.", node->name, node->line);
+      xmlXPathFreeContext(xpathp);
       xmlXPathFreeObject(result);
       return 1;
     }
