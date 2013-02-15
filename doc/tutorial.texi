@@ -43,9 +43,14 @@ libpackedobjects - an XML schema-aware compression library
 @section What is libpackedobjects?
 @cindex What is libpackedobjects
 
-libpackedobjects is a C library which can be used to efficiently compress an XML DOM by using the information provided by a corresponding XML Schema. The level of compression achieved is very similar to EXI but unlike EXI, libpackedobjects is designed to be light-weight and simple to implement. Therefore libpackedobjects is suited to embedded systems and mobile devices. The tool is designed for writing network protocols which strive to minimise the amount of data communicated. In addition to compression all data is validated by the schema during the encode and decode process.
+libpackedobjects is a C library from the @uref{http://packedobjects.org, Packedobjects project}. It can be used to efficiently compress an XML DOM by using the information provided by a corresponding XML Schema. The level of compression achieved is very similar to EXI but unlike EXI, libpackedobjects is designed to be light-weight and simple to implement. Therefore libpackedobjects is suited to embedded systems and mobile devices. The tool is designed for writing network protocols which strive to minimise the amount of data communicated. In addition to compression all data is validated by the schema during the encode and decode process.
 @* @*
-libpackedobjects is based on libxml2 and therefore should run on any system that libxml2 runs on. 
+libpackedobjects is based on libxml2 and therefore should run on any system that libxml2 runs on.
+
+@section Use case
+@cindex Use case
+
+If you want to send some structured data over a network, like XML but don't want to communicate many bytes - then libpackedobjects provides a light-weight way of doing this. All you need to do is write a Packedobjects schema and you are ready to go. Packedobjects schema is a just a subset of XML Schema designed to simplify writing a network protocol.
 
 @section Key features
 @cindex Key features
