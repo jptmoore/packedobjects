@@ -115,6 +115,11 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
   if (xml_validate_schema_rules(doc_schema)) {
     return NULL;
   }
+
+  // validate the schema to make sure repeating sequences conform to packedobjects schema
+  if (xml_validate_schema_sequence(doc_schema)) {
+    return NULL;
+  }  
   
   // setup validation context
   if ((schemap = xml_compile_schema(doc_schema)) == NULL) {

@@ -7,7 +7,7 @@ AC_DEFINE([PROGNAME],["libpackedobjects"],["an XML data compression tool"])
 
 AC_DEFINE([NSPREFIX],["xs"],["namespace prefix"])
 
-AC_DEFINE([NSURL],["http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd"],["namespace URL"])
+AC_DEFINE([NSURL],["http://www.w3.org/2001/XMLSchema"],["namespace URL"])
 
 AC_DEFINE([MAX_PDU],[1000],["maximum message size"])
 

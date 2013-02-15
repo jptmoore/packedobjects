@@ -117,3 +117,61 @@ static const char *schema_rules_file()
     return "/usr/share/libpackedobjects/packedobjectsSchemaTypes.xsd";
   } else return NULL;
 }
+
+int xml_validate_schema_sequence(xmlDocPtr doc)
+{
+  xmlXPathContextPtr xpathp = NULL;
+  xmlXPathObjectPtr result = NULL;
+  xmlNodeSetPtr nodes = NULL;
+  xmlNodePtr node = NULL;
+  int i;
+
+  // query to find repeating sequence types
+  char *xpath = "//xs:element[@maxOccurs]/..";
+  
+  // setup xpath
+  xpathp = xmlXPathNewContext(doc);
+  if (xpathp == NULL) {
+    alert("Error in xmlXPathNewContext.");
+    return 1;
+  }
+  
+  if(xmlXPathRegisterNs(xpathp, (const xmlChar *)NSPREFIX, (const xmlChar *)NSURL) != 0) {
+    xmlXPathFreeContext(xpathp);
+    alert("Error: unable to register NS.");
+    return 1;
+  }
+
+  // find all the sequences with maxOccurs
+  result = xmlXPathEvalExpression(xpath, xpathp);
+
+  if (result == NULL) {
+    xmlXPathFreeContext(xpathp);
+    alert("Error in xmlXPathEvalExpression.");
+    return NULL;
+  }
+
+  // this means there were no repeating sequence types which is fine
+  if(xmlXPathNodeSetIsEmpty(result->nodesetval)){
+    xmlXPathFreeContext(xpathp);
+    xmlXPathFreeObject(result);
+    return 0;
+  }
+
+  nodes = result->nodesetval;
+  for (i=0; i < nodes->nodeNr; i++) {
+    // examine each sequence to see how many children it has
+    node = nodes->nodeTab[i];
+    if ((xmlChildElementCount(node)) != 1) {
+      alert("Repeating %s type at line %d has more than one child.", node->name, node->line);
+      xmlXPathFreeObject(result);
+      return 1;
+    }
+  }
+
+  // repeating sequences conform
+  xmlXPathFreeObject(result);
+  xmlXPathFreeContext(xpathp);
+  
+  return 0;
+}
