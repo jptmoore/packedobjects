@@ -78,7 +78,7 @@ Simple subset of XML Schema required to create protocols
 @section Limitations
 @cindex Limitations
 
-libpackedobjects is not a general purpose document compression tool. It is intended to be used in an application that generate XML that you wish to communicate over a network. As such it provides a simple DOM-based API for encoding and decoding structured data. The compression technique used is based on applying knowledge of the data types specified in a schema to provide better performance over statistical compression techniques. Therefore, you must write a valid schema for your data. The style of schema required is based on a small subset of XML Schema. This schema serves the purpose of formalising the network protocol and provides validation. Thus we think it is a good thing!
+libpackedobjects is not a general purpose document compression tool. It is intended to be used in an application that generates XML that you wish to communicate over a network. As such it provides a simple DOM-based API for encoding and decoding structured data. The compression technique used is based on applying knowledge of the data types specified in a schema to provide better performance over statistical compression techniques. Therefore, you must write a valid schema for your data. The style of schema required is based on a small subset of XML Schema. This schema serves the purpose of formalising the network protocol and provides validation. Thus we think it is a good thing!
 
 @node Installation
 @chapter Installation
@@ -96,10 +96,8 @@ make
 make check
 sudo make install
 @end smallexample
-
-
-@section Further reading
-@cindex Further reading
+@noindent
+After installing you should be able to locate the runtime library and header files according to your install prefix. You will also have some schema files installed into your share directory. The @uref{https://gitorious.org/libpackedobjects/libpackedobjects/blobs/master/schema/packedobjectsDataTypes.xsd,packedobjectsDataTypes.xsd} file can be used in the include statement in place of the Internet addressable version you will see in the examples provided in this tutorial. Using a local copy of the data types will speed up the validation process.
 
 @node Getting started
 @chapter Getting started
@@ -213,7 +211,10 @@ To build an application with the software you must link with the library. Using 
 @section Writing a schema
 @cindex Writing a schema
 
-libpackedobjects uses a subset of XML Schema. This provides a focus similar to the concept of a Domain Specific Language. You are provided with suitable data types to be able to create functional network protocols. We will use the canonical ``Hello World'' example. We first write a schema:
+libpackedobjects uses a subset of XML Schema. This provides a focus similar to the concept of a Domain Specific Language. For a formal description of what is allowed in the language please take a look at the  @uref{https://gitorious.org/libpackedobjects/libpackedobjects/blobs/master/schema/packedobjectsSchemaTypes.xsd, schema} we use to validate user created schemas as well as force a consistent look to protocol definitions. Here you will see the basic structure of a Packedobjects schema which has a single include statement, followed by any simple type definitions, any complex type definitions and finally a single root element. You are provided with suitable data types (via the include statement) to be able to create functional network protocols.
+@subsection Hello World!
+@cindex Hello World!
+We will use the canonical ``Hello World!'' example. We first write a schema:
 @smallexample
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -332,7 +333,7 @@ This will restrict givenName to be between 1 and 64 characters in length (inclus
   </xs:element>
 @end smallexample
 @noindent
-This only allows a single character to be present.
+This only allows a single character to be present. It is a good idea to at least specify a maximum length of a string to minimise the chances of breaking the decoder on receiving bogus data.
 
 @subsection Integer constraints
 @cindex Integer constraints
@@ -440,7 +441,7 @@ So in this case we saying you must include a boz item but baz items are optional
 @subsection Sequences with data that may repeat
 @cindex Sequence with data that may repeat
 
-You will often work with data that has a repeating structure. In Packedobjects this means that a single child element may repeat. This child element could be a simple or complex type. You can describe this type with a special form of sequence by adding the @code{maxOccurs} attribute to child element that may repeat. Using the previous example we could do the following:
+You will often work with data that has a repeating structure. In Packedobjects schema this means that a single child element may repeat, however, this child element could be a simple or complex type. This restriction forces a consistent look to the XML data but more importantly provides opportunity for optimising the encoding of this type. You can describe this type with a special form of sequence by adding the @code{maxOccurs} attribute to child element that may repeat. Using the previous example we could do the following:
 @smallexample
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
@@ -475,7 +476,7 @@ In the above we have said that @code{bar} can repeat within the its parent @code
 </foo>
 @end smallexample
 @noindent
-It is a good idea to specify an integer instead of ``unbounded'' when you can. We can also supply a @code{minOccurs} attribute which is useful when you want to say that there might be no items.
+It is a good idea to specify an integer instead of ``unbounded'' when you can to minimise the chances of breaking the decoder on receiving bogus data. We can also supply a @code{minOccurs} attribute which is useful when you want to say that there might be no items.
 
 @subsection Choice
 @cindex Choice
