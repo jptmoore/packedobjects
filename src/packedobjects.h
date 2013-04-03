@@ -9,9 +9,9 @@
 #include <libxml/xpathInternals.h>
 
 #include "config.h"
+
 #include "schema.h"
-#include "encode.h"
-#include "decode.h"
+#include "ier.h"
 
 enum STRING_TYPES { STRING, BIT_STRING, NUMERIC_STRING, HEX_STRING, OCTET_STRING };
 
@@ -37,11 +37,15 @@ typedef struct {
   int decode_error;
 } packedobjectsContext;
 
+
+// some utility functions
 xmlDocPtr packedobjects_new_doc(const char *file);
-char *packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc);
-xmlDocPtr packedobjects_decode(packedobjectsContext *pc, char *pdu);
-packedobjectsContext *init_packedobjects(const char *schema_file);
-void free_packedobjects(packedobjectsContext *poCtxPtr);
 void packedobjects_dump_doc(xmlDoc *doc);
+
+// the API
+#include "packedobjects_init.h"
+#include "packedobjects_encode.h"
+#include "packedobjects_decode.h"
+
 
 #endif

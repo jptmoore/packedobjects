@@ -5,6 +5,7 @@
 
 #include <packedobjects/packedobjects.h>
 
+
 static int verbose_flag;
 
 static void file_encode(packedobjectsContext *pc, const char *infile, const char *outfile, int loop);
