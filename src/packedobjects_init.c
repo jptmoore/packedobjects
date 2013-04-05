@@ -44,7 +44,7 @@ static xmlChar *get_start_element(xmlDocPtr doc)
 
 packedobjectsContext *init_packedobjects(const char *schema_file)
 {
-  xmlDoc *doc_schema = NULL, *doc_canonical_schema = NULL;
+  xmlDoc *doc_schema = NULL, *doc_canonical_schema = NULL, *doc_expanded_schema = NULL;
   schemaData *schemap = NULL;
   packedobjectsContext *poCtxPtr = NULL;
   xmlXPathContextPtr xpathp = NULL;
@@ -97,7 +97,13 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
   // create user defined types hash table
   udt = xmlHashCreate(100);
   poCtxPtr->udt = udt;
-
+  hash_user_defined_types(poCtxPtr);
+  
+  // create expanded schema without user defined types
+  doc_expanded_schema = expand_user_defined_types(poCtxPtr);
+  //packedobjects_dump_doc(doc_expanded_schema);
+  poCtxPtr->doc_expanded_schema = doc_expanded_schema;
+  
   // create the canonical schema we will use for encoding/decoding
   doc_canonical_schema = packedobjects_make_canonical_schema(poCtxPtr);
   poCtxPtr->doc_canonical_schema = doc_canonical_schema;
@@ -142,7 +148,10 @@ void free_packedobjects(packedobjectsContext *poCtxPtr)
 {
   xml_free_schema(poCtxPtr->schemap);
   xmlFreeDoc(poCtxPtr->doc_schema);
-  xmlFreeDoc(poCtxPtr->doc_canonical_schema);  
+  xmlFreeDoc(poCtxPtr->doc_expanded_schema);
+  xmlFreeDoc(poCtxPtr->doc_canonical_schema);
+  // contents in hash table should be freed already
+  xmlHashFree(poCtxPtr->udt, NULL);
   xmlXPathFreeContext(poCtxPtr->xpathp);
   xmlFree(BAD_CAST poCtxPtr->start_element_name);
   // we created the pdu in our init function

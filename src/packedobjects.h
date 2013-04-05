@@ -25,6 +25,7 @@ enum ERROR_CODES {
 typedef struct {
   xmlDoc *doc_data;
   xmlDoc *doc_schema;
+  xmlDoc *doc_expanded_schema;
   xmlDoc *doc_canonical_schema;
   schemaData *schemap;
   xmlXPathContextPtr xpathp;

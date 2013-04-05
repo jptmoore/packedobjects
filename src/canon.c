@@ -25,21 +25,13 @@ static xmlChar *make_integer_variant(xmlNodePtr node1, xmlNodePtr node2, long un
 static xmlChar *make_enumerated_variant(xmlNodePtr node1, xmlNodePtr node2, long unsigned int count);
 xmlChar *get_sequence_type(xmlNodePtr node);
 
+
 xmlDocPtr packedobjects_make_canonical_schema(packedobjectsContext *pc)
-{
-  xmlDocPtr expanded_doc = NULL;
-  hash_user_defined_types(pc);
-  expanded_doc = expand_user_defined_types(pc);  
-  //packedobjects_dump_doc(expanded_doc);
-  
-  return make_canonical_schema(expanded_doc);
-}
-
-
-static xmlDocPtr make_canonical_schema(xmlDocPtr doc)
 {
   xmlDocPtr canonical_doc = NULL;
   xmlNodePtr root_node = NULL, canonical_root_node = NULL;
+
+  xmlDocPtr doc = pc->doc_expanded_schema;
   
   dbg("creating canonical XML schema:");
   root_node = xmlDocGetRootElement(doc);
@@ -68,6 +60,7 @@ static xmlNodePtr make_simple_simple_type(xmlNodePtr node)
   
   node_name = xmlGetProp(node, BAD_CAST "name");
   new_node = xmlNewNode(NULL, node_name);
+  xmlFree(node_name);
   type = xmlGetProp(node, BAD_CAST "type");
   xmlNewProp(new_node, BAD_CAST "type", type);
   variant = make_variant(node, new_node, type, 0);
@@ -184,11 +177,13 @@ static xmlNodePtr make_simple_type(xmlNodePtr node)
   xmlNodePtr new_node = NULL;
   xmlChar *node_name = NULL;
   xmlChar *type = NULL;
+  xmlChar *value = NULL;
   xmlChar *variant = NULL;
   long unsigned int count;
   
   node_name = xmlGetProp(node, BAD_CAST "name");
   new_node = xmlNewNode(NULL, node_name);
+  xmlFree(node_name);
   // move to restriction
   np = node->children->children;
   type = xmlGetProp(np, BAD_CAST "base"); 
@@ -204,8 +199,10 @@ static xmlNodePtr make_simple_type(xmlNodePtr node)
   xmlFree(type);
 
   // set all the attributes
-  for (; np; np = np->next) {  
-    xmlNewProp(new_node, np->name, xmlGetProp(np, BAD_CAST "value"));
+  for (; np; np = np->next) {
+    value = xmlGetProp(np, BAD_CAST "value");
+    xmlNewProp(new_node, np->name, value);
+    xmlFree(value);
   }
   
   return new_node;
@@ -256,6 +253,7 @@ static xmlNodePtr make_complex_type(xmlNodePtr node)
     np = np->children;
     node_name = xmlGetProp(node, BAD_CAST "name");
     new_node = xmlNewNode(NULL, node_name);
+    xmlFree(node_name);
     sequence_type = get_sequence_type(np);
     dbg("sequence_type:%s", sequence_type);
     if (xmlStrEqual(sequence_type, BAD_CAST "sequence-of")) {
@@ -289,6 +287,7 @@ static xmlNodePtr make_complex_type(xmlNodePtr node)
     dbg("items:%s", items);
     node_name = xmlGetProp(node, BAD_CAST "name");
     new_node = xmlNewNode(NULL, node_name);
+    xmlFree(node_name);
     xmlNewProp(new_node, BAD_CAST "type", BAD_CAST "choice");
     xmlNewProp(new_node, BAD_CAST "items", BAD_CAST items);
   } else {
@@ -317,18 +316,18 @@ static void make_canonical_schema_worker(xmlNode *node1, xmlNode *node2)
           //np = xmlAddChild(node2, xmlCopyNode(cur_node, 2));
           new_node = make_complex_type(cur_node);
           np = xmlAddChild(node2, new_node);
-          xmlAddChild(np->children, xmlCopyNode(cur_node, 2));;
+          xmlAddChild(np->children, xmlCopyNode(cur_node, 2));
           make_canonical_schema_worker(cur_node->children, np);
         } else {
           // simpleType with restrictions
           new_node = make_simple_type(cur_node);
-          xmlAddChild(node2, xmlCopyNode(new_node, 2));
+          xmlAddChild(node2, new_node);
           make_canonical_schema_worker(cur_node->children, node2);
         }
       } else {
         // straight forward simple type
         new_node = make_simple_simple_type(cur_node);
-        xmlAddChild(node2, xmlCopyNode(new_node, 2));
+        xmlAddChild(node2, new_node);
         make_canonical_schema_worker(cur_node->children, node2);
       }
     } else {

@@ -69,6 +69,7 @@ void expand_user_defined_types_worker(packedobjectsContext *pc, xmlNode *node1, 
   xmlNodePtr udt_node = NULL;
   xmlNodePtr np = NULL;
 
+  xmlNodePtr new_node = NULL;
   
   for (cur_node = node1; cur_node; cur_node = cur_node->next) {
     if (cur_node->type == XML_ELEMENT_NODE) {
@@ -77,17 +78,23 @@ void expand_user_defined_types_worker(packedobjectsContext *pc, xmlNode *node1, 
       // if a udt
       if ( (element_name) && (!is_simple_type(element_name)) ) {
         udt_node = xmlHashLookup(pc->udt, element_name);
-        np = xmlAddChild(node2, xmlCopyNode(cur_node, 2));
-        // create a node with just complexType or simpleType
+        xmlFree(element_name);
+        new_node = xmlCopyNode(cur_node, 2);
+        np = xmlAddChild(node2, new_node);
+        // create a node with just complexType or simpleType;
         np = xmlNewChild(np, NULL, udt_node->name, NULL);        
         xmlAddChild(np->children, xmlCopyNode(udt_node, 1));
         expand_user_defined_types_worker(pc, udt_node->children, np);
       } else if (cur_node->children) {
-        np = xmlAddChild(node2, xmlCopyNode(cur_node, 2));
-        xmlAddChild(np->children, xmlCopyNode(cur_node, 2));
+        xmlFree(element_name);
+        new_node = xmlCopyNode(cur_node, 2);
+        np = xmlAddChild(node2, new_node);
+        xmlAddChild(np->children, new_node);
         expand_user_defined_types_worker(pc, cur_node->children, np);
       } else {
-        xmlAddChild(node2, xmlCopyNode(cur_node, 2));
+        xmlFree(element_name);
+        new_node = xmlCopyNode(cur_node, 2);
+        xmlAddChild(node2, new_node);
         expand_user_defined_types_worker(pc, cur_node->children, node2);
       }
     }
@@ -120,6 +127,7 @@ void hash_user_defined_types(packedobjectsContext *pc)
       element_name = xmlGetProp(cur_node, (const xmlChar *)"name");
       dbg("adding %s to udt hash table", element_name);
       xmlHashAddEntry(pc->udt, element_name, cur_node);
+      xmlFree(element_name);
     }
     cur_node = cur_node->next;
   }
