@@ -101,11 +101,16 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
   
   // create expanded schema without user defined types
   doc_expanded_schema = expand_user_defined_types(poCtxPtr);
-  //packedobjects_dump_doc(doc_expanded_schema);
+#ifdef DEBUG_MODE
+  packedobjects_dump_doc_to_file("/tmp/expand.xml", doc_expanded_schema);
+#endif
   poCtxPtr->doc_expanded_schema = doc_expanded_schema;
   
   // create the canonical schema we will use for encoding/decoding
   doc_canonical_schema = packedobjects_make_canonical_schema(poCtxPtr);
+#ifdef DEBUG_MODE
+  packedobjects_dump_doc_to_file("/tmp/canon.xml", doc_canonical_schema);
+#endif  
   poCtxPtr->doc_canonical_schema = doc_canonical_schema;
 
   // setup xpath

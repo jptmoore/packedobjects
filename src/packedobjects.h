@@ -42,6 +42,7 @@ typedef struct {
 // some utility functions
 xmlDocPtr packedobjects_new_doc(const char *file);
 void packedobjects_dump_doc(xmlDoc *doc);
+void packedobjects_dump_doc_to_file(const char *fname, xmlDoc *doc);
 
 // the API
 #include "packedobjects_init.h"

@@ -3,7 +3,7 @@
 #include <string.h>
 #include <getopt.h>
 
-#include <packedobjects/packedobjects.h>
+#include "packedobjects.h"
 
 
 static int verbose_flag;

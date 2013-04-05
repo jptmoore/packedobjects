@@ -37,3 +37,7 @@ void packedobjects_dump_doc(xmlDoc *doc)
   xmlSaveFormatFileEnc("-", doc, "UTF-8", 1);
 }
 
+void packedobjects_dump_doc_to_file(const char *fname, xmlDoc *doc)
+{
+  xmlSaveFormatFileEnc(fname, doc, "UTF-8", 1);
+}
