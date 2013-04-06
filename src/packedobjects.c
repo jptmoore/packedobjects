@@ -22,6 +22,7 @@ xmlDocPtr packedobjects_new_doc(const char *file)
   xmlDocPtr doc = NULL;
 
   xmlKeepBlanksDefault(0);
+  //doc = xmlReadFile(file, NULL, XML_PARSE_COMPACT);
   doc = xmlReadFile(file, NULL, 0);
   
   if (doc == NULL) {
