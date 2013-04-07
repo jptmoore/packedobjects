@@ -3,16 +3,16 @@
   <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd" />
 
   <!-- User defined types -->
+  <xs:simpleType name="nameString">
+    <xs:restriction base="string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="64" />
+    </xs:restriction>
+  </xs:simpleType>
+  
   <xs:complexType name="nameType">                              
-    <xs:sequence>                                               
-      <xs:element name="givenName">                             
-        <xs:simpleType>                                         
-          <xs:restriction base="string">                        
-            <xs:minLength value="1" />                          
-            <xs:maxLength value="64" />                         
-          </xs:restriction>          
-        </xs:simpleType>             
-      </xs:element>                  
+    <xs:sequence>
+      <xs:element name="givenName" type="nameString" />
       <xs:element name="initial">    
         <xs:simpleType>              
           <xs:restriction base="string">
@@ -20,14 +20,7 @@
           </xs:restriction>      
         </xs:simpleType>         
       </xs:element>              
-      <xs:element name="familyName">
-        <xs:simpleType>
-          <xs:restriction base="string">
-            <xs:minLength value="1" />
-            <xs:maxLength value="64" />
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
+      <xs:element name="familyName" type="nameString" />
     </xs:sequence>
   </xs:complexType>
   

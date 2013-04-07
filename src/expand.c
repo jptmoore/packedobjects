@@ -82,8 +82,9 @@ void expand_user_defined_types_worker(packedobjectsContext *pc, xmlNode *node1, 
         new_node = xmlCopyNode(cur_node, 2);
         np = xmlAddChild(node2, new_node);
         // create a node with just complexType or simpleType;
-        np = xmlNewChild(np, NULL, udt_node->name, NULL);        
-        xmlAddChild(np->children, xmlCopyNode(udt_node, 1));
+        np = xmlNewChild(np, NULL, udt_node->name, NULL);
+        new_node = xmlCopyNode(udt_node, 2);
+        xmlAddChild(np->children, new_node);
         expand_user_defined_types_worker(pc, udt_node->children, np);
       } else if (cur_node->children) {
         xmlFree(element_name);
