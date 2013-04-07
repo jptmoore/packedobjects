@@ -68,8 +68,6 @@ void expand_user_defined_types_worker(packedobjectsContext *pc, xmlNode *node1, 
   xmlChar *element_name = NULL;
   xmlNodePtr udt_node = NULL;
   xmlNodePtr np = NULL;
-
-  xmlNodePtr new_node = NULL;
   
   for (cur_node = node1; cur_node; cur_node = cur_node->next) {
     if (cur_node->type == XML_ELEMENT_NODE) {
@@ -79,24 +77,13 @@ void expand_user_defined_types_worker(packedobjectsContext *pc, xmlNode *node1, 
       if ( (element_name) && (!is_simple_type(element_name)) ) {
         udt_node = xmlHashLookup(pc->udt, element_name);
         xmlFree(element_name);
-        new_node = xmlCopyNode(cur_node, 2);
-        np = xmlAddChild(node2, new_node);
-        // create a node with just complexType or simpleType;
-        np = xmlNewChild(np, NULL, udt_node->name, NULL);
-        new_node = xmlCopyNode(udt_node, 2);
-        xmlAddChild(np->children, new_node);
+        np = xmlAddChild(node2, xmlCopyNode(cur_node, 2));
+        np = xmlAddChild(np, xmlCopyNode(udt_node, 2));
         expand_user_defined_types_worker(pc, udt_node->children, np);
-      } else if (cur_node->children) {
-        xmlFree(element_name);
-        new_node = xmlCopyNode(cur_node, 2);
-        np = xmlAddChild(node2, new_node);
-        xmlAddChild(np->children, new_node);
-        expand_user_defined_types_worker(pc, cur_node->children, np);
       } else {
         xmlFree(element_name);
-        new_node = xmlCopyNode(cur_node, 2);
-        xmlAddChild(node2, new_node);
-        expand_user_defined_types_worker(pc, cur_node->children, node2);
+        np = xmlAddChild(node2, xmlCopyNode(cur_node, 2));
+        expand_user_defined_types_worker(pc, cur_node->children, np);
       }
     }
   }
