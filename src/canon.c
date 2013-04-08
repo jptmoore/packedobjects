@@ -304,37 +304,32 @@ static xmlNodePtr make_complex_type(xmlNodePtr node)
 static void make_canonical_schema_worker(xmlNode *node1, xmlNode *node2)
 {
   xmlNodePtr cur_node = NULL;
-  xmlNodePtr new_node = NULL;
   xmlNodePtr np = NULL;
 
-  
   for (cur_node = node1; cur_node; cur_node = cur_node->next) {
     if (xmlStrEqual(cur_node->name, BAD_CAST "element")) {
       if (cur_node->children) {
         if (xmlStrEqual(cur_node->children->name, BAD_CAST "complexType")) {
           // complexType
-          //np = xmlAddChild(node2, xmlCopyNode(cur_node, 2));
-          new_node = make_complex_type(cur_node);
-          np = xmlAddChild(node2, new_node);
-          xmlAddChild(np->children, xmlCopyNode(cur_node, 2));
+          np = xmlAddChild(node2, make_complex_type(cur_node));
           make_canonical_schema_worker(cur_node->children, np);
-        } else {
+        } else if (xmlStrEqual(cur_node->children->name, BAD_CAST "simpleType")) {
           // simpleType with restrictions
-          new_node = make_simple_type(cur_node);
-          xmlAddChild(node2, new_node);
-          make_canonical_schema_worker(cur_node->children, node2);
+          np = xmlAddChild(node2, make_simple_type(cur_node));
+          make_canonical_schema_worker(cur_node->children, np);
         }
       } else {
         // straight forward simple type
-        new_node = make_simple_simple_type(cur_node);
-        xmlAddChild(node2, new_node);
-        make_canonical_schema_worker(cur_node->children, node2);
+        np = xmlAddChild(node2, make_simple_simple_type(cur_node));
+        make_canonical_schema_worker(cur_node->children, np);
       }
     } else {
+      // skip over these
       make_canonical_schema_worker(cur_node->children, node2);
     }
   }
 }
+
 
 
 
