@@ -101,7 +101,8 @@ static void make_schema_query(char new_path[], char old_path[])
   *p2 = '\0';
 }
 
-char *packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc)
+// the real function
+static char *_packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc)
 {
   // default value indicates error
   pc->bytes = -1;
@@ -124,6 +125,60 @@ char *packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc)
   }
   
   return (pc->encodep->pdu);
+}
+
+int encode_make_memory(packedobjectsContext *pc, size_t bytes)
+{
+  char *pdu = NULL;
+  packedEncode *encodep = NULL;
+
+  // default PDU size from configure.ac
+  if (bytes == 0) {
+    pc->pdu_size = MAX_PDU;
+  } else {
+    pc->pdu_size = bytes;
+  }
+    
+  // allocate buffer for PDU
+  if ((pdu = malloc(pc->pdu_size)) == NULL) {
+    alert("Failed to allocate PDU buffer.");
+    return -1;
+  }
+  // setup encode structure
+  if ((encodep = initializeEncode(pdu, pc->pdu_size)) == NULL) {
+    alert("Failed to initialise encoder.");
+    return -1;    
+  }
+  pc->encodep = encodep;
+
+  return 0;
+  
+}
+
+void encode_free_memory(packedobjectsContext *pc)
+{
+  // we created the pdu in our init function
+  free(pc->encodep->pdu);
+  freeEncode(pc->encodep);
+}
+
+char *packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc)
+{
+  char *pdu = NULL;
+  size_t bytes = -1;
+
+  // let's hope this works first time
+  pdu = _packedobjects_encode(pc, doc);
+
+  // otherwise we will keep trying by doubling the memory
+  while (pc->encode_error == ENCODE_PDU_BUFFER_FULL) {
+    bytes = pc->pdu_size;
+    encode_free_memory(pc);
+    encode_make_memory(pc, bytes*2);
+    pdu = _packedobjects_encode(pc, doc);
+  }
+
+  return pdu;
 }
 
 void packedobjects_validate_encode(packedobjectsContext *poCtxPtr, xmlDocPtr doc)

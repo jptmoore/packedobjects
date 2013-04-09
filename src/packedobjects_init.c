@@ -189,33 +189,6 @@ static int setup_xpath(packedobjectsContext *pc)
   return 0;
 }
 
-static int setup_encoder_memory(packedobjectsContext *pc, size_t bytes)
-{
-  char *pdu = NULL;
-  packedEncode *encodep = NULL;
-
-  // default PDU size from configure.ac
-  if (bytes == 0) {
-    pc->pdu_size = MAX_PDU;
-  } else {
-    pc->pdu_size = bytes;
-  }
-    
-  // allocate buffer for PDU
-  if ((pdu = malloc(pc->pdu_size)) == NULL) {
-    alert("Failed to allocate PDU buffer.");
-    return -1;
-  }
-  // setup encode structure
-  if ((encodep = initializeEncode(pdu, pc->pdu_size)) == NULL) {
-    alert("Failed to initialise encoder.");
-    return -1;    
-  }
-  pc->encodep = encodep;
-
-  return 0;
-  
-}
 
 packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
 {
@@ -227,7 +200,7 @@ packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
   }
 
   // used to store the encoded data
-  if (setup_encoder_memory(pc, bytes) == -1) {
+  if (encode_make_memory(pc, bytes) == -1) {
     return NULL;
   }
   
@@ -279,9 +252,7 @@ void free_packedobjects(packedobjectsContext *pc)
   xmlHashFree(pc->udt, NULL);
   xmlXPathFreeContext(pc->xpathp);
   xmlFree(BAD_CAST pc->start_element_name);
-  // we created the pdu in our init function
-  free(pc->encodep->pdu);
-  freeEncode(pc->encodep);
+  encode_free_memory(pc);
   free(pc);
 
   xmlCleanupParser();

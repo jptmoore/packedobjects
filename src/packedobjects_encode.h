@@ -3,6 +3,11 @@
 
 #include "packedobjects.h"
 
+// main api function
 char *packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc);
+
+// auxillary functions
+int encode_make_memory(packedobjectsContext *pc, size_t bytes);
+void encode_free_memory(packedobjectsContext *pc);
 
 #endif
