@@ -46,14 +46,14 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
 {
   xmlDoc *doc_schema = NULL, *doc_canonical_schema = NULL, *doc_expanded_schema = NULL;
   schemaData *schemap = NULL;
-  packedobjectsContext *poCtxPtr = NULL;
+  packedobjectsContext *pc = NULL;
   xmlXPathContextPtr xpathp = NULL;
   xmlHashTablePtr udt = NULL;
   xmlChar *start_element_name = NULL;
   char *pdu = NULL;
   packedEncode *encodep = NULL;
   
-  if ((poCtxPtr = (packedobjectsContext *)malloc(sizeof(packedobjectsContext))) == NULL) {
+  if ((pc = (packedobjectsContext *)malloc(sizeof(packedobjectsContext))) == NULL) {
     alert("Could not alllocate memory.");
     return NULL;    
   }
@@ -64,12 +64,12 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
   }
 
   // supplied at encode
-  poCtxPtr->doc_data = NULL;
-  poCtxPtr->doc_schema = doc_schema;
+  pc->doc_data = NULL;
+  pc->doc_schema = doc_schema;
 
   // set start element in schema
   if ((start_element_name = get_start_element(doc_schema))) { 
-    poCtxPtr->start_element_name = start_element_name;
+    pc->start_element_name = start_element_name;
   } else {
     alert("Failed to find start element in schema.");
     return NULL;    
@@ -91,30 +91,30 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
     return NULL;
   }
 
-  poCtxPtr->schemap = schemap;
+  pc->schemap = schemap;
 
 
   // create user defined types hash table
   udt = xmlHashCreate(100);
-  poCtxPtr->udt = udt;
-  hash_user_defined_types(poCtxPtr);
+  pc->udt = udt;
+  hash_user_defined_types(pc);
   
   // create expanded schema without user defined types
-  doc_expanded_schema = expand_user_defined_types(poCtxPtr);
+  doc_expanded_schema = expand_user_defined_types(pc);
 #ifdef DEBUG_MODE
   packedobjects_dump_doc_to_file("/tmp/expand.xml", doc_expanded_schema);
 #endif
-  poCtxPtr->doc_expanded_schema = doc_expanded_schema;
+  pc->doc_expanded_schema = doc_expanded_schema;
   
   // create the canonical schema we will use for encoding/decoding
-  doc_canonical_schema = packedobjects_make_canonical_schema(poCtxPtr);
+  doc_canonical_schema = packedobjects_make_canonical_schema(pc);
 #ifdef DEBUG_MODE
   packedobjects_dump_doc_to_file("/tmp/canon.xml", doc_canonical_schema);
 #endif  
-  poCtxPtr->doc_canonical_schema = doc_canonical_schema;
+  pc->doc_canonical_schema = doc_canonical_schema;
 
   // setup xpath
-  xpathp = xmlXPathNewContext(poCtxPtr->doc_canonical_schema);
+  xpathp = xmlXPathNewContext(pc->doc_canonical_schema);
   if (xpathp == NULL) {
     alert("Error in xmlXPathNewContext.");
     return NULL;
@@ -125,7 +125,7 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
     return NULL;
   }
 
-  poCtxPtr->xpathp = xpathp;
+  pc->xpathp = xpathp;
 
 
   // allocate buffer for PDU
@@ -138,31 +138,31 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
     alert("Failed to initialise encoder.");
     return NULL;    
   }
-  poCtxPtr->encodep = encodep;
+  pc->encodep = encodep;
 
   // set some defaults
-  poCtxPtr->bytes = 0;
-  poCtxPtr->encode_error = 0;
-  poCtxPtr->decode_error = 0;
+  pc->bytes = 0;
+  pc->encode_error = 0;
+  pc->decode_error = 0;
 
   
-  return poCtxPtr;
+  return pc;
 }
 
-void free_packedobjects(packedobjectsContext *poCtxPtr)
+void free_packedobjects(packedobjectsContext *pc)
 {
-  xml_free_schema(poCtxPtr->schemap);
-  xmlFreeDoc(poCtxPtr->doc_schema);
-  xmlFreeDoc(poCtxPtr->doc_expanded_schema);
-  xmlFreeDoc(poCtxPtr->doc_canonical_schema);
+  xml_free_schema(pc->schemap);
+  xmlFreeDoc(pc->doc_schema);
+  xmlFreeDoc(pc->doc_expanded_schema);
+  xmlFreeDoc(pc->doc_canonical_schema);
   // contents in hash table should be freed already
-  xmlHashFree(poCtxPtr->udt, NULL);
-  xmlXPathFreeContext(poCtxPtr->xpathp);
-  xmlFree(BAD_CAST poCtxPtr->start_element_name);
+  xmlHashFree(pc->udt, NULL);
+  xmlXPathFreeContext(pc->xpathp);
+  xmlFree(BAD_CAST pc->start_element_name);
   // we created the pdu in our init function
-  free(poCtxPtr->encodep->pdu);
-  freeEncode(poCtxPtr->encodep);
-  free(poCtxPtr);
+  free(pc->encodep->pdu);
+  freeEncode(pc->encodep);
+  free(pc);
 
   xmlCleanupParser();
 }
