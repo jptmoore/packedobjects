@@ -21,8 +21,6 @@
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
 
-static xmlChar *get_start_element(xmlDocPtr doc);
-
 static xmlChar *get_start_element(xmlDocPtr doc)
 {
   xmlChar *element_name = NULL;
@@ -42,16 +40,10 @@ static xmlChar *get_start_element(xmlDocPtr doc)
   return element_name;
 }
 
-packedobjectsContext *init_packedobjects(const char *schema_file)
+static packedobjectsContext *_init_packedobjects(const char *schema_file)
 {
-  xmlDoc *doc_schema = NULL, *doc_canonical_schema = NULL, *doc_expanded_schema = NULL;
-  schemaData *schemap = NULL;
   packedobjectsContext *pc = NULL;
-  xmlXPathContextPtr xpathp = NULL;
-  xmlHashTablePtr udt = NULL;
-  xmlChar *start_element_name = NULL;
-  char *pdu = NULL;
-  packedEncode *encodep = NULL;
+  xmlDoc *doc_schema = NULL;
   
   if ((pc = (packedobjectsContext *)malloc(sizeof(packedobjectsContext))) == NULL) {
     alert("Could not alllocate memory.");
@@ -63,49 +55,107 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
     return NULL;
   }
 
-  // supplied at encode
-  pc->doc_data = NULL;
+  // set the schema
   pc->doc_schema = doc_schema;
+  // set some defaults
+  pc->doc_data = NULL;
+  pc->doc_expanded_schema = NULL;
+  pc->doc_canonical_schema = NULL;
+  pc->schemap = NULL;
+  pc->xpathp = NULL;
+  pc->udt = NULL;
+  pc->start_element_name = NULL;
+  pc->encodep = NULL;
+  pc->decodep = NULL;
+  pc->bytes = 0;
+  pc->encode_error = 0;
+  pc->decode_error = 0;
 
+  return pc;
+  
+}
+
+static int set_packedobjects_start_element(packedobjectsContext *pc)
+{
+  xmlChar *start_element_name = NULL;
+  
   // set start element in schema
-  if ((start_element_name = get_start_element(doc_schema))) { 
+  if ((start_element_name = get_start_element(pc->doc_schema))) { 
     pc->start_element_name = start_element_name;
+    return 0;
   } else {
     alert("Failed to find start element in schema.");
-    return NULL;    
+    return -1;    
   }
- 
+}
+
+static int validate_schema(packedobjectsContext *pc)
+{
+
   // validate the schema to make sure it conforms to packedobjects schema
-  if (xml_validate_schema_rules(doc_schema)) {
-    return NULL;
+  if (xml_validate_schema_rules(pc->doc_schema)) {
+    return -1;
   }
 
   // validate the schema to make sure repeating sequences conform to packedobjects schema
-  if (xml_validate_schema_sequence(doc_schema)) {
-    return NULL;
+  if (xml_validate_schema_sequence(pc->doc_schema)) {
+    return -1;
   }  
+
+  return 0;
+  
+}
+
+static int setup_data_validation(packedobjectsContext *pc)
+{
+  schemaData *schemap = NULL;
   
   // setup validation context
-  if ((schemap = xml_compile_schema(doc_schema)) == NULL) {
+  if ((schemap = xml_compile_schema(pc->doc_schema)) == NULL) {
     alert("Failed to preprocess schema.");
-    return NULL;
+    return -1;
   }
 
-  pc->schemap = schemap;
+  pc->schemap = schemap;  
 
+  return 0;
+}
 
+static int create_user_defined_types(packedobjectsContext *pc)
+{
+  xmlHashTablePtr udt = NULL;
+  
   // create user defined types hash table
-  udt = xmlHashCreate(100);
+  if ((udt = xmlHashCreate(100)) == NULL) {
+    alert("Failed to create hash table.");
+    return -1;
+  }
   pc->udt = udt;
-  hash_user_defined_types(pc);
+  hash_user_defined_types(pc);  
+
+  return 0;
+  
+}
+
+static int expand_schema(packedobjectsContext *pc)
+{
+  xmlDoc *doc_expanded_schema = NULL;
   
   // create expanded schema without user defined types
   doc_expanded_schema = expand_user_defined_types(pc);
 #ifdef DEBUG_MODE
   packedobjects_dump_doc_to_file("/tmp/expand.xml", doc_expanded_schema);
 #endif
-  pc->doc_expanded_schema = doc_expanded_schema;
+  pc->doc_expanded_schema = doc_expanded_schema;  
+
+  return 0;
   
+}
+
+static int make_canonical_schema(packedobjectsContext *pc)
+{
+  xmlDoc *doc_canonical_schema = NULL;
+
   // create the canonical schema we will use for encoding/decoding
   doc_canonical_schema = packedobjects_make_canonical_schema(pc);
 #ifdef DEBUG_MODE
@@ -113,38 +163,100 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
 #endif  
   pc->doc_canonical_schema = doc_canonical_schema;
 
+  return 0;
+  
+}
+
+static int setup_xpath(packedobjectsContext *pc)
+{
+  xmlXPathContextPtr xpathp = NULL;
+  
   // setup xpath
   xpathp = xmlXPathNewContext(pc->doc_canonical_schema);
   if (xpathp == NULL) {
     alert("Error in xmlXPathNewContext.");
-    return NULL;
+    return -1;
   }
 
   if(xmlXPathRegisterNs(xpathp, (const xmlChar *)NSPREFIX, (const xmlChar *)NSURL) != 0) {
     alert("Error: unable to register NS.");
-    return NULL;
+    return -1;
   }
 
   pc->xpathp = xpathp;
 
+  return 0;
+}
+
+static int setup_encoder_memory(packedobjectsContext *pc)
+{
+  char *pdu = NULL;
+  packedEncode *encodep = NULL;
 
   // allocate buffer for PDU
   if ((pdu = malloc(MAX_PDU)) == NULL) {
     alert("Failed to allocate PDU buffer.");
-    return NULL;
+    return -1;
   }
   // setup encode structure
   if ((encodep = initializeEncode(pdu, MAX_PDU)) == NULL) {
     alert("Failed to initialise encoder.");
-    return NULL;    
+    return -1;    
   }
   pc->encodep = encodep;
 
-  // set some defaults
-  pc->bytes = 0;
-  pc->encode_error = 0;
-  pc->decode_error = 0;
+  return 0;
+  
+}
 
+packedobjectsContext *init_packedobjects(const char *schema_file)
+{
+  packedobjectsContext *pc = NULL;
+
+  // do the real allocation of structure with the provided schema
+  if ((pc = _init_packedobjects(schema_file)) == NULL) {
+    return NULL;
+  }
+
+  // set start element in schema
+  if (set_packedobjects_start_element(pc) == -1) {
+    return NULL;
+  }
+
+  // validate the schema conforms to PO schema
+  if (validate_schema(pc) == -1) {
+    return NULL;
+  }
+  
+  // initialise xml validation code for later 
+  if (setup_data_validation(pc) == -1) {
+    return NULL;
+  }
+
+  // record any user define types
+  if (create_user_defined_types(pc) == -1) {
+    return NULL;
+  }
+  
+  // expand user defined types in schema
+  if (expand_schema(pc) == -1) {
+    return NULL;
+  }
+
+  // make the canonical schema used for encoding
+  if (make_canonical_schema(pc) == -1) {
+    return NULL;
+  }
+
+  // setup xpath to use during encode
+  if (setup_xpath(pc) == -1) {
+    return NULL;
+  }
+
+  // used to store the encoded data
+  if (setup_encoder_memory(pc) == -1) {
+    return NULL;
+  }
   
   return pc;
 }

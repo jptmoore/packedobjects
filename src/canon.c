@@ -15,7 +15,6 @@
   (fprintf(stderr, PROGNAME ":%s: " fmtstr "\n", __func__, ##args))
 #endif
 
-static xmlDocPtr make_canonical_schema(xmlDocPtr doc);
 static void make_canonical_schema_worker(xmlNode *node1, xmlNode *node2);  
 static xmlNodePtr make_simple_simple_type(xmlNodePtr node);
 static xmlNodePtr make_simple_type(xmlNodePtr node);
