@@ -67,6 +67,7 @@ static packedobjectsContext *_init_packedobjects(const char *schema_file)
   pc->start_element_name = NULL;
   pc->encodep = NULL;
   pc->decodep = NULL;
+  pc->pdu_size = 0;
   pc->bytes = 0;
   pc->encode_error = 0;
   pc->decode_error = 0;
@@ -188,18 +189,25 @@ static int setup_xpath(packedobjectsContext *pc)
   return 0;
 }
 
-static int setup_encoder_memory(packedobjectsContext *pc)
+static int setup_encoder_memory(packedobjectsContext *pc, size_t bytes)
 {
   char *pdu = NULL;
   packedEncode *encodep = NULL;
 
+  // default PDU size from configure.ac
+  if (bytes == 0) {
+    pc->pdu_size = MAX_PDU;
+  } else {
+    pc->pdu_size = bytes;
+  }
+    
   // allocate buffer for PDU
-  if ((pdu = malloc(MAX_PDU)) == NULL) {
+  if ((pdu = malloc(pc->pdu_size)) == NULL) {
     alert("Failed to allocate PDU buffer.");
     return -1;
   }
   // setup encode structure
-  if ((encodep = initializeEncode(pdu, MAX_PDU)) == NULL) {
+  if ((encodep = initializeEncode(pdu, pc->pdu_size)) == NULL) {
     alert("Failed to initialise encoder.");
     return -1;    
   }
@@ -209,7 +217,7 @@ static int setup_encoder_memory(packedobjectsContext *pc)
   
 }
 
-packedobjectsContext *init_packedobjects(const char *schema_file)
+packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
 {
   packedobjectsContext *pc = NULL;
 
@@ -218,6 +226,11 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
     return NULL;
   }
 
+  // used to store the encoded data
+  if (setup_encoder_memory(pc, bytes) == -1) {
+    return NULL;
+  }
+  
   // set start element in schema
   if (set_packedobjects_start_element(pc) == -1) {
     return NULL;
@@ -250,11 +263,6 @@ packedobjectsContext *init_packedobjects(const char *schema_file)
 
   // setup xpath to use during encode
   if (setup_xpath(pc) == -1) {
-    return NULL;
-  }
-
-  // used to store the encoded data
-  if (setup_encoder_memory(pc) == -1) {
     return NULL;
   }
   

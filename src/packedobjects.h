@@ -33,6 +33,7 @@ typedef struct {
   const xmlChar *start_element_name;
   packedEncode *encodep;
   packedDecode *decodep;
+  size_t pdu_size;
   int bytes;
   int encode_error;
   int decode_error;
