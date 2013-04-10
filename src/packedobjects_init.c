@@ -24,21 +24,13 @@
 static packedobjectsContext *_init_packedobjects(const char *schema_file)
 {
   packedobjectsContext *pc = NULL;
-  xmlDoc *doc_schema = NULL;
   
   if ((pc = (packedobjectsContext *)malloc(sizeof(packedobjectsContext))) == NULL) {
     alert("Could not alllocate memory.");
     return NULL;    
   }
   
-  if ((doc_schema = packedobjects_new_doc(schema_file)) == NULL) {
-    alert("Failed to create doc.");
-    return NULL;
-  }
-
-  // set the schema
-  pc->doc_schema = doc_schema;
-  // set some defaults
+  pc->doc_schema = NULL;
   pc->doc_data = NULL;
   pc->doc_expanded_schema = NULL;
   pc->doc_canonical_schema = NULL;
@@ -66,6 +58,11 @@ packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
     return NULL;
   }
 
+  // store the schema we will work with
+  if (schema_setup_schema(pc, schema_file) == -1) {
+    return NULL;
+  }  
+  
   // used to store the encoded data
   if (encode_make_memory(pc, bytes) == -1) {
     return NULL;
@@ -106,9 +103,9 @@ void free_packedobjects(packedobjectsContext *pc)
   canon_free(pc);
   schema_free_xpath(pc);
   encode_free_memory(pc);
-
-  // free what was made here
-  xmlFreeDoc(pc->doc_schema);
+  schema_free(pc);
+  
+  // free the structure
   free(pc);
 
   xmlCleanupParser();

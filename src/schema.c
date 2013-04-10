@@ -243,3 +243,24 @@ void schema_free_xpath(packedobjectsContext *pc)
   
 
 }
+
+int schema_setup_schema(packedobjectsContext *pc, const char *schema_file)
+{  
+  xmlDoc *doc_schema = NULL;
+  
+  if ((doc_schema = packedobjects_new_doc(schema_file)) == NULL) {
+    alert("Failed to create doc.");
+    return -1;
+  }
+  
+  // set the schema
+  pc->doc_schema = doc_schema;  
+
+  return 0;
+  
+}
+
+void schema_free(packedobjectsContext *pc)
+{
+  xmlFreeDoc(pc->doc_schema);
+}
