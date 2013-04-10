@@ -94,12 +94,12 @@ static int validate_schema(packedobjectsContext *pc)
 {
 
   // validate the schema to make sure it conforms to packedobjects schema
-  if (xml_validate_schema_rules(pc->doc_schema)) {
+  if (schema_validate_schema_rules(pc->doc_schema)) {
     return -1;
   }
 
   // validate the schema to make sure repeating sequences conform to packedobjects schema
-  if (xml_validate_schema_sequence(pc->doc_schema)) {
+  if (schema_validate_schema_sequence(pc->doc_schema)) {
     return -1;
   }  
 
@@ -112,7 +112,7 @@ static int setup_data_validation(packedobjectsContext *pc)
   schemaData *schemap = NULL;
   
   // setup validation context
-  if ((schemap = xml_compile_schema(pc->doc_schema)) == NULL) {
+  if ((schemap = schema_compile_schema(pc->doc_schema)) == NULL) {
     alert("Failed to preprocess schema.");
     return -1;
   }
@@ -244,7 +244,7 @@ packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
 
 void free_packedobjects(packedobjectsContext *pc)
 {
-  xml_free_schema(pc->schemap);
+  schema_free_schema(pc->schemap);
   xmlFreeDoc(pc->doc_schema);
   xmlFreeDoc(pc->doc_expanded_schema);
   xmlFreeDoc(pc->doc_canonical_schema);

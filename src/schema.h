@@ -9,9 +9,9 @@ typedef struct {
   xmlSchemaValidCtxtPtr validCtxt;
 } schemaData;
 
-schemaData *xml_compile_schema(xmlDoc *schema);
-void xml_free_schema(schemaData *schemap);
-int xml_validate_schema_rules(xmlDocPtr doc);
-int xml_validate_schema_sequence(xmlDocPtr doc);
+schemaData *schema_compile_schema(xmlDoc *schema);
+void schema_free_schema(schemaData *schemap);
+int schema_validate_schema_rules(xmlDocPtr doc);
+int schema_validate_schema_sequence(xmlDocPtr doc);
 
 #endif

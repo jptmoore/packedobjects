@@ -18,7 +18,7 @@
 
 static const char *schema_rules_file();
 
-schemaData *xml_compile_schema(xmlDoc *schema)
+schemaData *schema_compile_schema(xmlDoc *schema)
 {
   xmlSchemaParserCtxtPtr parserCtxt = NULL;
   xmlSchemaPtr schemaPtr = NULL;
@@ -54,7 +54,7 @@ schemaData *xml_compile_schema(xmlDoc *schema)
   return schemap;
 }
 
-void xml_free_schema(schemaData *schemap)
+void schema_free_schema(schemaData *schemap)
 {
 
   if (schemap->parserCtxt) {
@@ -72,7 +72,7 @@ void xml_free_schema(schemaData *schemap)
   
 }
 
-int xml_validate_schema_rules(xmlDocPtr doc)
+int schema_validate_schema_rules(xmlDocPtr doc)
 {
   xmlDocPtr doc_schemarules = NULL;
   schemaData *schemarulesp = NULL;
@@ -87,7 +87,7 @@ int xml_validate_schema_rules(xmlDocPtr doc)
     alert("Failed to create doc.");  
     return 1;
   }
-  if ((schemarulesp = xml_compile_schema(doc_schemarules)) == NULL) {
+  if ((schemarulesp = schema_compile_schema(doc_schemarules)) == NULL) {
     alert("Failed to preprocess schema.");
     xmlFreeDoc(doc_schemarules);
     return 1;
@@ -95,13 +95,13 @@ int xml_validate_schema_rules(xmlDocPtr doc)
   if (xmlSchemaValidateDoc(schemarulesp->validCtxt, doc)) {
     alert("Failed to validate schema.");
     xmlFreeDoc(doc_schemarules);
-    xml_free_schema(schemarulesp);
+    schema_free_schema(schemarulesp);
     return 1;
   } 
 
   // validation passed
   xmlFreeDoc(doc_schemarules);
-  xml_free_schema(schemarulesp);
+  schema_free_schema(schemarulesp);
   
   return 0;
 
@@ -118,7 +118,7 @@ static const char *schema_rules_file()
   } else return NULL;
 }
 
-int xml_validate_schema_sequence(xmlDocPtr doc)
+int schema_validate_schema_sequence(xmlDocPtr doc)
 {
   xmlXPathContextPtr xpathp = NULL;
   xmlXPathObjectPtr result = NULL;
