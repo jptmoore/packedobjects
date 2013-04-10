@@ -21,25 +21,6 @@
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
 
-static xmlChar *get_start_element(xmlDocPtr doc)
-{
-  xmlChar *element_name = NULL;
-  xmlNodePtr root_node = NULL, cur_node = NULL;
-  
-  root_node = xmlDocGetRootElement(doc);
-  cur_node = root_node->children;
-  
-  while (cur_node != NULL) {
-    if ((!xmlStrcmp(cur_node->name, (const xmlChar *)"element"))) {
-      element_name = xmlGetProp(cur_node, (const xmlChar *)"name");      
-      break;
-    }
-    cur_node = cur_node->next;
-  }  
-
-  return element_name;
-}
-
 static packedobjectsContext *_init_packedobjects(const char *schema_file)
 {
   packedobjectsContext *pc = NULL;
@@ -74,20 +55,6 @@ static packedobjectsContext *_init_packedobjects(const char *schema_file)
 
   return pc;
   
-}
-
-static int set_packedobjects_start_element(packedobjectsContext *pc)
-{
-  xmlChar *start_element_name = NULL;
-  
-  // set start element in schema
-  if ((start_element_name = get_start_element(pc->doc_schema))) { 
-    pc->start_element_name = start_element_name;
-    return 0;
-  } else {
-    alert("Failed to find start element in schema.");
-    return -1;    
-  }
 }
 
 static int validate_schema(packedobjectsContext *pc)
@@ -158,11 +125,6 @@ packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
     return NULL;
   }
   
-  // set start element in schema
-  if (set_packedobjects_start_element(pc) == -1) {
-    return NULL;
-  }
-
   // validate the schema conforms to PO schema
   if (validate_schema(pc) == -1) {
     return NULL;

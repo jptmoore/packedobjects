@@ -159,10 +159,48 @@ static int create_user_defined_types(packedobjectsContext *pc)
   
 }
 
+static xmlChar *get_start_element(xmlDocPtr doc)
+{
+  xmlChar *element_name = NULL;
+  xmlNodePtr root_node = NULL, cur_node = NULL;
+  
+  root_node = xmlDocGetRootElement(doc);
+  cur_node = root_node->children;
+  
+  while (cur_node != NULL) {
+    if ((!xmlStrcmp(cur_node->name, (const xmlChar *)"element"))) {
+      element_name = xmlGetProp(cur_node, (const xmlChar *)"name");      
+      break;
+    }
+    cur_node = cur_node->next;
+  }  
+
+  return element_name;
+}
+
+static int set_start_element(packedobjectsContext *pc)
+{
+  xmlChar *start_element_name = NULL;
+  
+  // set start element in schema
+  if ((start_element_name = get_start_element(pc->doc_schema))) { 
+    pc->start_element_name = start_element_name;
+    return 0;
+  } else {
+    alert("Failed to find start element in schema.");
+    return -1;    
+  }
+}
+
 int expand_make_expanded_schema(packedobjectsContext *pc)
 {
   xmlDoc *doc_expanded_schema = NULL;
 
+  // set start element in schema
+  if (set_start_element(pc) == -1) {
+    return -1;
+  }
+  
   // record any user define types
   if (create_user_defined_types(pc) == -1) {
     return -1;
