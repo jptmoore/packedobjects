@@ -344,5 +344,10 @@ static void make_canonical_schema_worker(xmlNode *node1, xmlNode *node2)
 }
 
 
+void canon_free(packedobjectsContext *pc)
+{
 
+  xmlFreeDoc(pc->doc_canonical_schema);  
+
+}
 

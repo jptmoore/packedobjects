@@ -216,3 +216,12 @@ int expand_make_expanded_schema(packedobjectsContext *pc)
   return 0;
   
 }
+
+void expand_free(packedobjectsContext *pc)
+{
+  xmlFree(BAD_CAST pc->start_element_name);
+  xmlFreeDoc(pc->doc_expanded_schema);
+  // contents in hash table should be freed already
+  xmlHashFree(pc->udt, NULL);
+  
+}

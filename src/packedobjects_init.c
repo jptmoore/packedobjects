@@ -77,7 +77,7 @@ packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
   }
   
   // initialise xml validation code for later 
-  if (schema_setup_data_validation(pc) == -1) {
+  if (schema_setup_validation(pc) == -1) {
     return NULL;
   }
   
@@ -101,15 +101,14 @@ packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
 
 void free_packedobjects(packedobjectsContext *pc)
 {
-  schema_free_schema(pc->schemap);
-  xmlFreeDoc(pc->doc_schema);
-  xmlFreeDoc(pc->doc_expanded_schema);
-  xmlFreeDoc(pc->doc_canonical_schema);
-  // contents in hash table should be freed already
-  xmlHashFree(pc->udt, NULL);
-  xmlXPathFreeContext(pc->xpathp);
-  xmlFree(BAD_CAST pc->start_element_name);
+  schema_free_validation(pc);
+  expand_free(pc);
+  canon_free(pc);
+  schema_free_xpath(pc);
   encode_free_memory(pc);
+
+  // free what was made here
+  xmlFreeDoc(pc->doc_schema);
   free(pc);
 
   xmlCleanupParser();

@@ -53,7 +53,7 @@ static schemaData *compile_schema(xmlDoc *schema)
   return schemap;
 }
 
-void schema_free_schema(schemaData *schemap)
+static void free_validation(schemaData *schemap)
 {
 
   if (schemap->parserCtxt) {
@@ -68,6 +68,13 @@ void schema_free_schema(schemaData *schemap)
   }
 
   free(schemap);
+  
+}
+
+void schema_free_validation(packedobjectsContext *pc)
+{
+  
+  free_validation(pc->schemap);
   
 }
 
@@ -94,13 +101,13 @@ static int validate_schema_rules(xmlDocPtr doc)
   if (xmlSchemaValidateDoc(schemarulesp->validCtxt, doc)) {
     alert("Failed to validate schema.");
     xmlFreeDoc(doc_schemarules);
-    schema_free_schema(schemarulesp);
+    free_validation(schemarulesp);
     return 1;
   } 
 
   // validation passed
   xmlFreeDoc(doc_schemarules);
-  schema_free_schema(schemarulesp);
+  free_validation(schemarulesp);
   
   return 0;
 
@@ -214,7 +221,7 @@ int schema_validate_schema(packedobjectsContext *pc)
   
 }
 
-int schema_setup_data_validation(packedobjectsContext *pc)
+int schema_setup_validation(packedobjectsContext *pc)
 {
   schemaData *schemap = NULL;
   
@@ -227,4 +234,12 @@ int schema_setup_data_validation(packedobjectsContext *pc)
   pc->schemap = schemap;  
 
   return 0;
+}
+
+void schema_free_xpath(packedobjectsContext *pc)
+{
+
+  xmlXPathFreeContext(pc->xpathp);
+  
+
 }
