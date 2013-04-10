@@ -7,6 +7,13 @@
 #define dbg(dummy...)
 #endif
 
+#ifdef QUIET_MODE
+#define alert(dummy...)
+#else
+#define alert(fmtstr, args...) \
+  (fprintf(stderr, PROGNAME ":%s: " fmtstr "\n", __func__, ##args))
+#endif
+
 static void expand_user_defined_types_worker(packedobjectsContext *pc, xmlNode *node1, xmlNode *node2);
 
 char *simple_types[] =
@@ -27,7 +34,21 @@ char *simple_types[] =
     NULL
   };
 
-xmlDoc *expand_user_defined_types(packedobjectsContext *pc)
+static int is_simple_type(const xmlChar *type)
+{
+  int result = 0;
+  char **st = simple_types;
+  while (*st) {
+    if (xmlStrEqual(BAD_CAST *st, type)) {
+      result = 1;
+    }
+    st++;
+  }
+  return result;
+
+}
+
+static xmlDoc *expand_user_defined_types(packedobjectsContext *pc)
 {
   xmlDoc *expanded_doc = NULL;
   xmlNodePtr root_node = NULL, expanded_root_node = NULL;
@@ -62,7 +83,7 @@ xmlDoc *expand_user_defined_types(packedobjectsContext *pc)
   
 }
 
-void expand_user_defined_types_worker(packedobjectsContext *pc, xmlNode *node1, xmlNode *node2)
+static void expand_user_defined_types_worker(packedobjectsContext *pc, xmlNode *node1, xmlNode *node2)
 {
   xmlNode *cur_node = NULL;
   xmlChar *element_name = NULL;
@@ -89,7 +110,7 @@ void expand_user_defined_types_worker(packedobjectsContext *pc, xmlNode *node1, 
   }
 }
 
-void hash_user_defined_types(packedobjectsContext *pc)
+static void hash_user_defined_types(packedobjectsContext *pc)
 {
 
   xmlNodePtr schema_node = NULL;
@@ -122,17 +143,38 @@ void hash_user_defined_types(packedobjectsContext *pc)
 
 }
 
-
-int is_simple_type(const xmlChar *type)
+static int create_user_defined_types(packedobjectsContext *pc)
 {
-  int result = 0;
-  char **st = simple_types;
-  while (*st) {
-    if (xmlStrEqual(BAD_CAST *st, type)) {
-      result = 1;
-    }
-    st++;
+  xmlHashTablePtr udt = NULL;
+  
+  // create user defined types hash table
+  if ((udt = xmlHashCreate(100)) == NULL) {
+    alert("Failed to create hash table.");
+    return -1;
   }
-  return result;
+  pc->udt = udt;
+  hash_user_defined_types(pc);  
 
+  return 0;
+  
+}
+
+int expand_make_expanded_schema(packedobjectsContext *pc)
+{
+  xmlDoc *doc_expanded_schema = NULL;
+
+  // record any user define types
+  if (create_user_defined_types(pc) == -1) {
+    return -1;
+  }
+  
+  // create expanded schema without user defined types
+  doc_expanded_schema = expand_user_defined_types(pc);
+#ifdef DEBUG_MODE
+  packedobjects_dump_doc_to_file("/tmp/expand.xml", doc_expanded_schema);
+#endif
+  pc->doc_expanded_schema = doc_expanded_schema;  
+
+  return 0;
+  
 }

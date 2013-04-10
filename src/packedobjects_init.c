@@ -122,39 +122,6 @@ static int setup_data_validation(packedobjectsContext *pc)
   return 0;
 }
 
-static int create_user_defined_types(packedobjectsContext *pc)
-{
-  xmlHashTablePtr udt = NULL;
-  
-  // create user defined types hash table
-  if ((udt = xmlHashCreate(100)) == NULL) {
-    alert("Failed to create hash table.");
-    return -1;
-  }
-  pc->udt = udt;
-  hash_user_defined_types(pc);  
-
-  return 0;
-  
-}
-
-static int expand_schema(packedobjectsContext *pc)
-{
-  xmlDoc *doc_expanded_schema = NULL;
-  
-  // create expanded schema without user defined types
-  doc_expanded_schema = expand_user_defined_types(pc);
-#ifdef DEBUG_MODE
-  packedobjects_dump_doc_to_file("/tmp/expand.xml", doc_expanded_schema);
-#endif
-  pc->doc_expanded_schema = doc_expanded_schema;  
-
-  return 0;
-  
-}
-
-
-
 static int setup_xpath(packedobjectsContext *pc)
 {
   xmlXPathContextPtr xpathp = NULL;
@@ -205,14 +172,9 @@ packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
   if (setup_data_validation(pc) == -1) {
     return NULL;
   }
-
-  // record any user define types
-  if (create_user_defined_types(pc) == -1) {
-    return NULL;
-  }
   
   // expand user defined types in schema
-  if (expand_schema(pc) == -1) {
+  if (expand_make_expanded_schema(pc) == -1) {
     return NULL;
   }
 
