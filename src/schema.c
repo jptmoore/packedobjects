@@ -1,6 +1,5 @@
 #include <unistd.h>
-#include "packedobjects.h"
-
+#include "schema.h"
 
 #ifdef DEBUG_MODE
 #define dbg(fmtstr, args...) \
@@ -18,7 +17,7 @@
 
 static const char *schema_rules_file();
 
-schemaData *schema_compile_schema(xmlDoc *schema)
+static schemaData *compile_schema(xmlDoc *schema)
 {
   xmlSchemaParserCtxtPtr parserCtxt = NULL;
   xmlSchemaPtr schemaPtr = NULL;
@@ -72,7 +71,7 @@ void schema_free_schema(schemaData *schemap)
   
 }
 
-int schema_validate_schema_rules(xmlDocPtr doc)
+static int validate_schema_rules(xmlDocPtr doc)
 {
   xmlDocPtr doc_schemarules = NULL;
   schemaData *schemarulesp = NULL;
@@ -87,7 +86,7 @@ int schema_validate_schema_rules(xmlDocPtr doc)
     alert("Failed to create doc.");  
     return 1;
   }
-  if ((schemarulesp = schema_compile_schema(doc_schemarules)) == NULL) {
+  if ((schemarulesp = compile_schema(doc_schemarules)) == NULL) {
     alert("Failed to preprocess schema.");
     xmlFreeDoc(doc_schemarules);
     return 1;
@@ -118,7 +117,7 @@ static const char *schema_rules_file()
   } else return NULL;
 }
 
-int schema_validate_schema_sequence(xmlDocPtr doc)
+static int validate_schema_sequence(xmlDocPtr doc)
 {
   xmlXPathContextPtr xpathp = NULL;
   xmlXPathObjectPtr result = NULL;
@@ -174,5 +173,58 @@ int schema_validate_schema_sequence(xmlDocPtr doc)
   xmlXPathFreeObject(result);
   xmlXPathFreeContext(xpathp);
   
+  return 0;
+}
+
+int schema_setup_xpath(packedobjectsContext *pc)
+{
+  xmlXPathContextPtr xpathp = NULL;
+  
+  // setup xpath
+  xpathp = xmlXPathNewContext(pc->doc_canonical_schema);
+  if (xpathp == NULL) {
+    alert("Error in xmlXPathNewContext.");
+    return -1;
+  }
+
+  if(xmlXPathRegisterNs(xpathp, (const xmlChar *)NSPREFIX, (const xmlChar *)NSURL) != 0) {
+    alert("Error: unable to register NS.");
+    return -1;
+  }
+
+  pc->xpathp = xpathp;
+
+  return 0;
+}
+
+int schema_validate_schema(packedobjectsContext *pc)
+{
+
+  // validate the schema to make sure it conforms to packedobjects schema
+  if (validate_schema_rules(pc->doc_schema)) {
+    return -1;
+  }
+
+  // validate the schema to make sure repeating sequences conform to packedobjects schema
+  if (validate_schema_sequence(pc->doc_schema)) {
+    return -1;
+  }  
+
+  return 0;
+  
+}
+
+int schema_setup_data_validation(packedobjectsContext *pc)
+{
+  schemaData *schemap = NULL;
+  
+  // setup validation context
+  if ((schemap = compile_schema(pc->doc_schema)) == NULL) {
+    alert("Failed to preprocess schema.");
+    return -1;
+  }
+
+  pc->schemap = schemap;  
+
   return 0;
 }

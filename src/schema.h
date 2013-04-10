@@ -3,15 +3,9 @@
 
 #include "packedobjects.h"
 
-typedef struct {
-  xmlSchemaParserCtxtPtr parserCtxt;
-  xmlSchemaPtr schemaPtr;
-  xmlSchemaValidCtxtPtr validCtxt;
-} schemaData;
-
-schemaData *schema_compile_schema(xmlDoc *schema);
+int schema_setup_xpath(packedobjectsContext *pc);
+int schema_validate_schema(packedobjectsContext *pc);
+int schema_setup_data_validation(packedobjectsContext *pc);
 void schema_free_schema(schemaData *schemap);
-int schema_validate_schema_rules(xmlDocPtr doc);
-int schema_validate_schema_sequence(xmlDocPtr doc);
 
 #endif

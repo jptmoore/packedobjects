@@ -10,7 +10,6 @@
 
 #include "config.h"
 
-#include "schema.h"
 #include "ier.h"
 
 enum STRING_TYPES { STRING, BIT_STRING, NUMERIC_STRING, HEX_STRING, OCTET_STRING };
@@ -21,6 +20,12 @@ enum ERROR_CODES {
   DECODE_VALIDATION_FAILED,
   DECODE_INVALID_PREFIX,
 };
+
+typedef struct {
+  xmlSchemaParserCtxtPtr parserCtxt;
+  xmlSchemaPtr schemaPtr;
+  xmlSchemaValidCtxtPtr validCtxt;
+} schemaData;
 
 typedef struct {
   xmlDoc *doc_data;

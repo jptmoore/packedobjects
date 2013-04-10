@@ -57,60 +57,6 @@ static packedobjectsContext *_init_packedobjects(const char *schema_file)
   
 }
 
-static int validate_schema(packedobjectsContext *pc)
-{
-
-  // validate the schema to make sure it conforms to packedobjects schema
-  if (schema_validate_schema_rules(pc->doc_schema)) {
-    return -1;
-  }
-
-  // validate the schema to make sure repeating sequences conform to packedobjects schema
-  if (schema_validate_schema_sequence(pc->doc_schema)) {
-    return -1;
-  }  
-
-  return 0;
-  
-}
-
-static int setup_data_validation(packedobjectsContext *pc)
-{
-  schemaData *schemap = NULL;
-  
-  // setup validation context
-  if ((schemap = schema_compile_schema(pc->doc_schema)) == NULL) {
-    alert("Failed to preprocess schema.");
-    return -1;
-  }
-
-  pc->schemap = schemap;  
-
-  return 0;
-}
-
-static int setup_xpath(packedobjectsContext *pc)
-{
-  xmlXPathContextPtr xpathp = NULL;
-  
-  // setup xpath
-  xpathp = xmlXPathNewContext(pc->doc_canonical_schema);
-  if (xpathp == NULL) {
-    alert("Error in xmlXPathNewContext.");
-    return -1;
-  }
-
-  if(xmlXPathRegisterNs(xpathp, (const xmlChar *)NSPREFIX, (const xmlChar *)NSURL) != 0) {
-    alert("Error: unable to register NS.");
-    return -1;
-  }
-
-  pc->xpathp = xpathp;
-
-  return 0;
-}
-
-
 packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
 {
   packedobjectsContext *pc = NULL;
@@ -126,12 +72,12 @@ packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
   }
   
   // validate the schema conforms to PO schema
-  if (validate_schema(pc) == -1) {
+  if (schema_validate_schema(pc) == -1) {
     return NULL;
   }
   
   // initialise xml validation code for later 
-  if (setup_data_validation(pc) == -1) {
+  if (schema_setup_data_validation(pc) == -1) {
     return NULL;
   }
   
@@ -146,7 +92,7 @@ packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
   }
 
   // setup xpath to use during encode
-  if (setup_xpath(pc) == -1) {
+  if (schema_setup_xpath(pc) == -1) {
     return NULL;
   }
   
