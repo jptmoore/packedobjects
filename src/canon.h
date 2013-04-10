@@ -3,7 +3,7 @@
 
 #include "packedobjects.h"
 
-xmlDocPtr packedobjects_make_canonical_schema(packedobjectsContext *pc);
+int canon_make_canonical_schema(packedobjectsContext *pc);
 
 
 #endif

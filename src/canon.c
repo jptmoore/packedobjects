@@ -25,7 +25,7 @@ static xmlChar *make_enumerated_variant(xmlNodePtr node1, xmlNodePtr node2, long
 xmlChar *get_sequence_type(xmlNodePtr node);
 
 
-xmlDocPtr packedobjects_make_canonical_schema(packedobjectsContext *pc)
+static xmlDocPtr make_canonical_schema(packedobjectsContext *pc)
 {
   xmlDocPtr canonical_doc = NULL;
   xmlNodePtr root_node = NULL, canonical_root_node = NULL;
@@ -48,6 +48,20 @@ xmlDocPtr packedobjects_make_canonical_schema(packedobjectsContext *pc)
   return canonical_doc;
 }
 
+int canon_make_canonical_schema(packedobjectsContext *pc)
+{
+  xmlDoc *doc_canonical_schema = NULL;
+
+  // create the canonical schema we will use for encoding/decoding
+  doc_canonical_schema = make_canonical_schema(pc);
+#ifdef DEBUG_MODE
+  packedobjects_dump_doc_to_file("/tmp/canon.xml", doc_canonical_schema);
+#endif  
+  pc->doc_canonical_schema = doc_canonical_schema;
+
+  return 0;
+  
+}
 
 static xmlNodePtr make_simple_simple_type(xmlNodePtr node)
 {

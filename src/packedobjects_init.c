@@ -153,20 +153,7 @@ static int expand_schema(packedobjectsContext *pc)
   
 }
 
-static int make_canonical_schema(packedobjectsContext *pc)
-{
-  xmlDoc *doc_canonical_schema = NULL;
 
-  // create the canonical schema we will use for encoding/decoding
-  doc_canonical_schema = packedobjects_make_canonical_schema(pc);
-#ifdef DEBUG_MODE
-  packedobjects_dump_doc_to_file("/tmp/canon.xml", doc_canonical_schema);
-#endif  
-  pc->doc_canonical_schema = doc_canonical_schema;
-
-  return 0;
-  
-}
 
 static int setup_xpath(packedobjectsContext *pc)
 {
@@ -230,7 +217,7 @@ packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
   }
 
   // make the canonical schema used for encoding
-  if (make_canonical_schema(pc) == -1) {
+  if (canon_make_canonical_schema(pc) == -1) {
     return NULL;
   }
 
