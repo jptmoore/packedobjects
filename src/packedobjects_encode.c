@@ -116,7 +116,10 @@ static char *_packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc)
     break;
   case ENCODE_PDU_BUFFER_FULL:
     pc->encode_error = ENCODE_PDU_BUFFER_FULL;
-    break; 
+    break;
+  case ENCODE_XPATH_QUERY_FAILED:
+    pc->encode_error = ENCODE_XPATH_QUERY_FAILED;
+    break;    
   case 0:
     if ((pc->init_options & NO_DATA_VALIDATION) == 0) {
       // validate data against schema depending on flag
@@ -212,6 +215,8 @@ static void traverse_doc_data(packedobjectsContext *pc, xmlNode *node)
       if ((schema_node = query_schema(pc, BAD_CAST new_path))) {
         dbg("new_path:%s", new_path);
         encode_node(pc, cur_node, schema_node);
+      } else {
+        longjmp(encode_exception_env, ENCODE_XPATH_QUERY_FAILED);
       }
     }
     traverse_doc_data(pc, cur_node->children);
