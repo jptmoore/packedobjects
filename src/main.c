@@ -159,7 +159,8 @@ int main(int argc, char **argv)
   if (!out_file) exit_with_message("did not specify --out file");
 
   // initialise packedobjects
-  if ((pc = init_packedobjects(schema_file, 0)) == NULL) {
+  //if ((pc = init_packedobjects(schema_file, 0, NO_SCHEMA_VALIDATION | NO_DATA_VALIDATION)) == NULL) {
+  if ((pc = init_packedobjects(schema_file, 0, 0)) == NULL) {
     exit_with_message("failed to initialise libpackedobjects");
   }
 

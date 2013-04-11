@@ -564,9 +564,11 @@ xmlDocPtr packedobjects_decode(packedobjectsContext *pc, char *pdu)
     doc_data = xmlNewDoc(BAD_CAST "1.0");
     // ignore the temporary root
     xmlDocSetRootElement(doc_data, data_node->children);
-    xmlFreeNode(data_node);  
-    // validate data against schema
-    packedobjects_validate_decode(pc, doc_data);
+    xmlFreeNode(data_node);
+    if ((pc->init_options & NO_DATA_VALIDATION) == 0) {
+      // validate data against schema
+      packedobjects_validate_decode(pc, doc_data);
+    }
   }
   
   return doc_data;

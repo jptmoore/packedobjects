@@ -42,7 +42,7 @@ static packedobjectsContext *_init_packedobjects()
   pc->decodep = NULL;
   pc->pdu_size = 0;
   pc->bytes = 0;
-  pc->init_error = 0;
+  pc->init_options = 0;
   pc->encode_error = 0;
   pc->decode_error = 0;
 
@@ -50,7 +50,7 @@ static packedobjectsContext *_init_packedobjects()
   
 }
 
-packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
+packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes, int options)
 {
   packedobjectsContext *pc = NULL;
 
@@ -58,6 +58,9 @@ packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
   if ((pc = _init_packedobjects()) == NULL) {
     return INIT_FAILED;
   }
+
+  // we will need these later
+  pc->init_options = options;
 
   // store the schema we will work with
   if (schema_setup_schema(pc, schema_file) == -1) {
@@ -68,15 +71,21 @@ packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
   if (encode_make_memory(pc, bytes) == -1) {
     return INIT_ENCODE_SETUP_FAILED;
   }
-  
-  // validate the schema conforms to PO schema
-  if (schema_validate_schema(pc) == -1) {
-    return INIT_SCHEMA_VALIDATION_FAILED;
+
+  // check flag
+  if ((options & NO_SCHEMA_VALIDATION) == 0) {
+    // validate the schema conforms to PO schema
+    if (schema_validate_schema(pc) == -1) {
+      return INIT_SCHEMA_VALIDATION_FAILED;
+    }
   }
-  
-  // initialise xml validation code for later 
-  if (schema_setup_validation(pc) == -1) {
-    return INIT_SETUP_VALIDATION_FAILED;
+
+  // check flag
+  if ((options & NO_DATA_VALIDATION) == 0) {  
+    // initialise xml validation code for later 
+    if (schema_setup_validation(pc) == -1) {
+      return INIT_SETUP_VALIDATION_FAILED;
+    }
   }
   
   // expand user defined types in schema
@@ -99,7 +108,9 @@ packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes)
 
 void free_packedobjects(packedobjectsContext *pc)
 {
-  schema_free_validation(pc);
+  if ((pc->init_options & NO_DATA_VALIDATION) == 0) {  
+    schema_free_validation(pc);
+  }
   expand_free(pc);
   canon_free(pc);
   schema_free_xpath(pc);

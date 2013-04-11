@@ -29,6 +29,11 @@ enum ERROR_CODES {
   DECODE_INVALID_PREFIX,
 };
 
+enum INIT_OPTION {
+  NO_SCHEMA_VALIDATION = 1,
+  NO_DATA_VALIDATION = 2,
+};
+  
 typedef struct {
   xmlSchemaParserCtxtPtr parserCtxt;
   xmlSchemaPtr schemaPtr;
@@ -48,7 +53,7 @@ typedef struct {
   packedDecode *decodep;
   size_t pdu_size;
   int bytes;
-  int init_error;
+  int init_options;
   int encode_error;
   int decode_error;
 } packedobjectsContext;

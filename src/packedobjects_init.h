@@ -7,7 +7,7 @@
 #include "expand.h"
 #include "schema.h"
 
-packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes);
+packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes, int options);
 void free_packedobjects(packedobjectsContext *poCtxPtr);
 
 #endif

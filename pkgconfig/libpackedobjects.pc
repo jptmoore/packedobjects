@@ -6,6 +6,6 @@ libdir=${exec_prefix}/lib
 Name: libpackedobjects
 Description: XML Schema-aware compression
 Requires: libxml-2.0 >= 2.7.8
-Version: 0.0.6
+Version: 0.0.7
 Libs: -L${libdir} -lpackedobjects
 Cflags: -I${includedir}/packedobjects 

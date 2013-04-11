@@ -118,8 +118,10 @@ static char *_packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc)
     pc->encode_error = ENCODE_PDU_BUFFER_FULL;
     break; 
   case 0:
-    // validate data against schema
-    packedobjects_validate_encode(pc, doc);
+    if ((pc->init_options & NO_DATA_VALIDATION) == 0) {
+      // validate data against schema depending on flag
+      packedobjects_validate_encode(pc, doc);
+    }
     traverse_doc_data(pc, xmlDocGetRootElement(doc));
     pc->bytes = finalizeEncode(pc->encodep);
   }
