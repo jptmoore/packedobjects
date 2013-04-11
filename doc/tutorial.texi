@@ -131,7 +131,7 @@ If you want to examine the performance of the tool you can use the @code{--loop}
 
 There are only 4 main function calls which are made available by adding @code{#include <packedobjects/packedobjects.h>} to your code.
 @smallexample
-packedobjectsContext *init_packedobjects(const char *schema_file);
+packedobjectsContext *init_packedobjects(const char *schema_file, size_t bytes, int options);
 
 char *packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc);
 
@@ -140,7 +140,7 @@ xmlDocPtr packedobjects_decode(packedobjectsContext *pc, char *pdu);
 void free_packedobjects(packedobjectsContext *poCtxPtr);
 @end smallexample
 @noindent
-You first must initialise the library using your XML Schema. Typical use would be one called to init_packedobjects at startup and then multiple calls to encode/decode based on your protocol. The interface to the packedobjects_encode function requires a libxml2 doc type. The packedobjects_decode function returns a libxml2 doc type.
+You first must initialise the library using your XML Schema together with two other parameters which can be optionally set. The second paramter is the amount of bytes you wish to allocate to the encoder. If you supply 0 the default size will be taken from configure.ac. The third parameter allows some flags to be set. Again, you can leave this as 0 if you do not wish to set any flags. The enumeration INIT_OPTION in packedobjects.h provides a list of flags available. Typical use would be one call to init_packedobjects at startup and then multiple calls to encode/decode based on your protocol. The interface to the packedobjects_encode function requires a libxml2 doc type. The packedobjects_decode function returns a libxml2 doc type.
 @noindent
 A very simple program demonstrating the API is as follows:
 @smallformat
@@ -160,7 +160,7 @@ int main()
   ///////////////////// Initialising ///////////////////
   
   // initialise packedobjects
-  if ((pc = init_packedobjects(XML_SCHEMA)) == NULL) {
+  if ((pc = init_packedobjects(XML_SCHEMA, 0, 0)) == NULL) {
     printf("failed to initialise libpackedobjects");
     exit(1);
   }
