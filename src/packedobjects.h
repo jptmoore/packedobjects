@@ -55,6 +55,7 @@ typedef struct {
   size_t pdu_size;
   int bytes;
   int init_options;
+  int init_error;
   int encode_error;
   int decode_error;
 } packedobjectsContext;
