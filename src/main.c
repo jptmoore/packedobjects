@@ -7,6 +7,7 @@
 
 
 static int verbose_flag;
+static int fast_flag;
 
 static void file_encode(packedobjectsContext *pc, const char *infile, const char *outfile, int loop);
 static void file_decode(packedobjectsContext *pc, const char *infile, const char *outfile, int loop);
@@ -102,11 +103,12 @@ int main(int argc, char **argv)
     static struct option long_options[] =
       {
         {"verbose", no_argument,       &verbose_flag, 1},
+        {"fast", no_argument,       &fast_flag, 1},
         {"help",  no_argument, 0, 'h'},
         {"schema",  required_argument, 0, 's'},
         {"in",  required_argument, 0, 'i'},
         {"out",  required_argument, 0, 'o'},
-        {"loop",  required_argument, 0, 'l'},        
+        {"loop",  required_argument, 0, 'l'},
         {0, 0, 0, 0}
       };
     int option_index = 0;
@@ -142,7 +144,7 @@ int main(int argc, char **argv)
 
       case 'l':
         loop = atoi(optarg);
-        break;        
+        break;
         
       case '?':
         print_usage();
@@ -157,13 +159,19 @@ int main(int argc, char **argv)
   if (!schema_file) exit_with_message("did not specify --schema file");
   if (!in_file) exit_with_message("did not specify --in file");
   if (!out_file) exit_with_message("did not specify --out file");
-
+  
   // initialise packedobjects
-  //if ((pc = init_packedobjects(schema_file, 0, NO_SCHEMA_VALIDATION | NO_DATA_VALIDATION)) == NULL) {
-  if ((pc = init_packedobjects(schema_file, 0, 0)) == NULL) {
-    exit_with_message("failed to initialise libpackedobjects");
+  if (fast_flag) {
+    if (verbose_flag) printf("running without any validation.\n");
+    pc = init_packedobjects(schema_file, 0, NO_SCHEMA_VALIDATION | NO_DATA_VALIDATION);
+  } else {
+    pc = init_packedobjects(schema_file, 0, 0);
   }
 
+  if (pc == NULL) {
+    exit_with_message("failed to initialise libpackedobjects");    
+  }
+  
   // check file endings to determine if encode or decode
   in_file_ext = get_filename_ext(in_file);
   out_file_ext = get_filename_ext(out_file);
