@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="/usr/local/share/libpackedobjects/packedobjectsDataTypes.xsd" />
+
+  <xs:simpleType name="numberType">
+    <xs:restriction base="integer">
+      <xs:minInclusive value="0" />
+      <xs:maxInclusive value="10000" />
+    </xs:restriction>
+  </xs:simpleType> 
+  
+  <xs:simpleType name="positionType">
+    <xs:restriction base="enumerated">
+      <xs:enumeration value="First Base" />
+      <xs:enumeration value="Second Base" />
+      <xs:enumeration value="Third Base" />
+      <xs:enumeration value="Fourth Base" />
+      <xs:enumeration value="Outfield" />
+      <xs:enumeration value="Catcher" />
+      <xs:enumeration value="Second Base" />
+      <xs:enumeration value="Shortstop" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="nameType">
+    <xs:restriction base="string">
+      <xs:maxLength value="40" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="intType">
+    <xs:restriction base="integer">
+      <xs:minInclusive value="0" />
+      <xs:maxInclusive value="1000" />
+    </xs:restriction>
+  </xs:simpleType>  
+  
+  <xs:element name="PLAYERS">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="PLAYER" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="NUMBER" type="numberType" />
+              <xs:element name="SURNAME" type="nameType" />
+              <xs:element name="GIVEN_NAME" type="nameType" />
+              <xs:element name="POSITION" type="positionType" />
+              <xs:element name="GAMES" type="intType" />
+              <xs:element name="GAMES_STARTED" type="intType" />
+              <xs:element name="AT_BATS" type="intType" />
+              <xs:element name="RUNS" type="intType" />
+              <xs:element name="HITS" type="intType"  />
+              <xs:element name="DOUBLES" type="intType" />
+              <xs:element name="TRIPLES" type="intType" />
+              <xs:element name="HOME_RUNS" type="intType" />
+              <xs:element name="RBI" type="intType" />
+              <xs:element name="STEALS" type="intType" />
+              <xs:element name="CAUGHT_STEALING" type="intType" />
+              <xs:element name="SACRIFICE_HITS" type="intType" />
+              <xs:element name="SACRIFICE_FLIES" type="intType" />
+              <xs:element name="ERRORS" type="intType" />
+              <xs:element name="PB" type="intType"  />
+              <xs:element name="WALKS" type="intType" />
+              <xs:element name="STRUCK_OUT" type="intType" />
+              <xs:element name="HIT_BY_PITCH" type="intType" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+</xs:schema>
