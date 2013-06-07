@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="http://zedstar.org/xml/schema/packedobjectsDataTypes.xsd"/>  
+  <xs:element name="test">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="id" type="hex-string"/>
+        <xs:element name="device">
+          <xs:simpleType>
+            <xs:restriction base="enumerated">
+              <xs:enumeration value="CoaguChek XS system"/>
+              <xs:enumeration value="Alere INRatio"/>
+              <xs:enumeration value="ICTMed ProTime"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="testtime" type="unix-time"/>
+        <xs:element name="protime">
+          <xs:simpleType>
+            <xs:restriction base="integer">
+              <xs:minInclusive value="0"/>
+              <xs:maxInclusive value="30"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:element>
+        <xs:element name="inr" type="decimal"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
