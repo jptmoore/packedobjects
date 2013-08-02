@@ -61,7 +61,7 @@
 
   <xs:simpleType name="currency">
     <xs:restriction base="xs:decimal">
-      <xs:pattern value="\d+.\d{2}"/>
+      <xs:pattern value="\d{1,7}.\d{2}"/>
     </xs:restriction>
   </xs:simpleType>
 
