@@ -46,4 +46,5 @@ tools/packedobjects/src/config.h.in
 tools/packedobjects/src/main.o
 tools/packedobjects/src/packedobjects
 tools/packedobjects/src/stamp-h1
-
+tools/packedobjects/src/.deps/
+tools/packedobjects/src/*.o
