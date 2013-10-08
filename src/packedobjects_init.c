@@ -21,7 +21,7 @@
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)))
 
 
-static packedobjectsContext *_init_packedobjects()
+packedobjectsContext *_init_packedobjects()
 {
   packedobjectsContext *pc = NULL;
   
