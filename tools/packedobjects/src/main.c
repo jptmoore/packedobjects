@@ -155,19 +155,6 @@ int main(int argc, char **argv)
       }
   }
 
-  // most be a single xml file to compress or singe .po file to decompress
-  if (argc == 2) {
-    const char *file_ext = get_filename_ext(argv[1]);
-    if (strcmp(file_ext, "xml") == 0) {
-      printf("compressing...\n");
-      return EXIT_SUCCESS;
-    }
-    if (strcmp(file_ext, "po") == 0) {
-      printf("decompressing...\n");
-      return EXIT_SUCCESS;
-    }    
-  }
-
   // do some simple checking
   if (!schema_file) exit_with_message("did not specify --schema file");
   if (!in_file) exit_with_message("did not specify --in file");
