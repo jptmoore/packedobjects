@@ -9,6 +9,10 @@
 #include <math.h>
 #include <time.h>
 
+#ifdef __QNX__
+#include <sys/socket.h>
+#endif
+
 #include "packedobjects.h"
 #include "config.h"
 #include "ier.h"
@@ -21,7 +25,6 @@
 #define ONE_BIT 1
 
 #define SIXTEEN_K (16*1024)
-
 
 #ifdef DEBUG_MODE
 #define dbg(fmtstr, args...) \

@@ -121,6 +121,8 @@ static const char *schema_rules_file()
     return "/usr/local/share/libpackedobjects/packedobjectsSchemaTypes.xsd";
   } else if ( access( "/usr/share/libpackedobjects", F_OK ) != -1 ) {
     return "/usr/share/libpackedobjects/packedobjectsSchemaTypes.xsd";
+    else if ( access( "app/native", F_OK ) != -1 ) {
+      return "app/native/packedobjectsSchemaTypes.xsd";
   } else return NULL;
 }
 
