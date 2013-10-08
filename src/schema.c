@@ -151,12 +151,12 @@ static int validate_schema_sequence(xmlDocPtr doc)
   }
 
   // find all the sequences with maxOccurs
-  result = xmlXPathEvalExpression(xpath, xpathp);
+  result = xmlXPathEvalExpression(BAD_CAST xpath, xpathp);
 
   if (result == NULL) {
     xmlXPathFreeContext(xpathp);
     alert("Error in xmlXPathEvalExpression.");
-    return NULL;
+    return 1;
   }
 
   // this means there were no repeating sequence types which is fine
