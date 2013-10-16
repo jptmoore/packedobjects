@@ -14,7 +14,7 @@ library_include_HEADERS = packedobjects.h packedobjects_init.h packedobjects_enc
 
 check_PROGRAMS = packedobjects
 packedobjects_SOURCES = main.c
-packedobjects_LDADD = $(lib_LTLIBRARIES)
+packedobjects_LDADD = $(lib_LTLIBRARIES) $(LIBXML2_LIBS)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = $(top_builddir)/pkgconfig/libpackedobjects.pc
