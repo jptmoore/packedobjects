@@ -123,6 +123,8 @@ static const char *schema_rules_file()
     return "/usr/share/libpackedobjects/packedobjectsSchemaTypes.xsd";
   } else if ( access( "app/native", F_OK ) != -1 ) {
     return "app/native/packedobjectsSchemaTypes.xsd";
+  } else if ( access( "packedobjectsSchemaTypes.xsd", F_OK ) != -1 ) {
+      return "packedobjectsSchemaTypes.xsd";
   } else return NULL;
 }
 
