@@ -3,7 +3,7 @@
 
 #include "packedobjects.h"
 
-int expand_expand_schema(packedobjectsContext *pc);
+int expand_make_expanded_schema(packedobjectsContext *pc);
 void expand_free(packedobjectsContext *pc);
 
 #endif
