@@ -1081,8 +1081,8 @@ void encodeUnixTime(packedEncode *memBuf, char *timestring)
 
   t =  rfc3339string_to_epoch(timestring);
   dbg("epoch:%ld", (long)t);
-  encodeUnconstrainedInteger(memBuf, (long)t);  
-  
+  // we are assuming time_t is signed
+  encodeUnsignedConstrainedInteger(memBuf, (long)t, INT_MIN, INT_MAX);
 }
 
 char *decodeUnixTime(packedDecode *memBuf)
@@ -1096,7 +1096,8 @@ char *decodeUnixTime(packedDecode *memBuf)
     alert("Insufficient memory.");
     return NULL;
   }
-  t = (time_t)decodeUnconstrainedInteger(memBuf);
+  // we are assuming time_t is signed
+  t = (time_t)decodeUnsignedConstrainedInteger(memBuf, INT_MIN, INT_MAX);
   dbg("epoch:%ld", (long)t);
   epoch_to_rfc3339string(timestring, 30, t);
   dbg("timestring:%s", timestring);
