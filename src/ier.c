@@ -7,6 +7,7 @@
 #include <arpa/inet.h>
 #include <setjmp.h>
 #include <math.h>
+#define __USE_XOPEN
 #include <time.h>
 
 #ifdef __QNX__
