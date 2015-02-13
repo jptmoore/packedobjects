@@ -52,3 +52,4 @@ compile
 nbproject/
 tools/packedobjects/src/packedobjects.exe
 src/packedobjects.exe
+m4/*
