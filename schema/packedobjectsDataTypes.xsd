@@ -5,7 +5,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:simpleType name="integer">
-    <xs:restriction base="xs:integer">
+    <xs:restriction base="xs:int">
     </xs:restriction>
   </xs:simpleType>
 
