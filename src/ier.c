@@ -1028,39 +1028,53 @@ char *decodeIPv4Address(packedDecode *memBuf)
   return ip;
 }
 
-
-// utility func
+// utility function
 static time_t rfc3339string_to_epoch(const char *timestring)
 {
-  struct tm tm;
-  time_t t;
-  time_t offset;
-
-  memset(&tm, 0, sizeof(struct tm));
+    struct tm tm;
+    time_t t;
+    char ignore, sign;
+    int years, months, days, hours, minutes, seconds, offset_hours, offset_minutes;    
+   
+    const int Z = 19; // position of Z char
+    
+    sscanf(timestring, "%d-%d-%d%c%d:%d:%d", 
+        &years,
+        &months,
+        &days,
+        &ignore, // [T | ]   
+        &hours,
+        &minutes,
+        &seconds);
+    
+    tm.tm_year = years-1900;
+    tm.tm_mon = months-1; // months from 0          
+    tm.tm_mday = days;          
+    tm.tm_hour = hours;     
+    tm.tm_min = minutes;
+    tm.tm_sec = seconds;
+    tm.tm_isdst = 0;
+   
+    if (timestring[Z] == 'Z') goto done;
+    
+    sscanf(timestring+Z, "%c%d:%d", 
+        &sign,
+        &offset_hours,
+        &offset_minutes);
+        
+    if (sign == '+') {
+        tm.tm_hour += offset_hours;
+        tm.tm_min += offset_minutes;
+    } else if (sign == '-') {
+        tm.tm_hour -= offset_hours;
+        tm.tm_min -= offset_minutes;
+    }
+    
+ done:   
+    
+    t = timegm(&tm);
   
-  if (strptime(timestring, "%FT%TZ", &tm) != 0) goto done;
-  if (strptime(timestring, "%F %TZ", &tm) != 0) goto done;  
-  if (strptime(timestring, "%FT%T%z", &tm) != 0) goto done;
-  if (strptime(timestring, "%F %T%z", &tm) != 0) goto done;  
-  
-  // fall through to error
-  alert("strptime() failed.");
-  return 0;
-  
- done:
-
-  offset = tm.tm_gmtoff;
-  
-  tm.tm_isdst = -1;
-  t = timegm(&tm);
-  if (t == -1) {
-    alert("daylight saving error.");
-    return 0;    
-  }
-  
-  // add time zone offset
-  return t + offset;
-  
+    return t;
 }
 
 // utility function

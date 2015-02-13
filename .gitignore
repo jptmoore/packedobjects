@@ -51,3 +51,4 @@ tools/packedobjects/src/*.o
 compile
 nbproject/
 tools/packedobjects/src/packedobjects.exe
+src/packedobjects.exe
