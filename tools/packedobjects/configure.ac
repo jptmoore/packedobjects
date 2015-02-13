@@ -21,7 +21,7 @@ AC_FUNC_MALLOC
 # check for libpackedobjects
 PKG_CHECK_MODULES(LIBPACKEDOBJECTS, [libpackedobjects])
 
-#AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_MACRO_DIR([m4])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 

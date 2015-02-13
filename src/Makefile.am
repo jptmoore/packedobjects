@@ -1,4 +1,4 @@
-INCLUDES = -Wall $(LIBXML2_CFLAGS)
+AM_CPPFLAGS = -Wall $(LIBXML2_CFLAGS)
 
 lib_LTLIBRARIES = libpackedobjects.la
 

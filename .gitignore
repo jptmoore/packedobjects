@@ -48,3 +48,6 @@ tools/packedobjects/src/packedobjects
 tools/packedobjects/src/stamp-h1
 tools/packedobjects/src/.deps/
 tools/packedobjects/src/*.o
+compile
+nbproject/
+tools/packedobjects/src/packedobjects.exe
