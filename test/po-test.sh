@@ -83,9 +83,10 @@ then
 	if
 	    [ ${file: -4} == ".xml" ]
 	then
-	    schema=${file: 0:-4}
-	    pofile=${file: 0:-4}
-	    newxml=${file: 0:-4}
+            f=${file%.*}
+	    schema=$f
+	    pofile=$f
+	    newxml=$f
 	    encode $schema $file $pofile 1
 	    decode $schema $pofile $newxml 1
 	    stats $file $pofile $newxml 
@@ -97,9 +98,10 @@ then
     if
 	[ ${xmlFile: -4} == ".xml" ]
     then
-	schema=${xmlFile: 0:-4}
-	pofile=${xmlFile: 0:-4}
-	newxml=${xmlFile: 0:-4}
+        f=${xmlFile%.*}
+	schema=$f
+	pofile=$f
+	newxml=$f
 	encode $schema $xmlFile $pofile 1
 	decode $schema $pofile $newxml 1
 	stats $xmlFile $pofile $newxml 
