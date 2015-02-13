@@ -34,7 +34,7 @@ packedDecode *initializeDecode(char * pdu) {
     alert("Failed to allocate memory during initialisation.");
     return NULL;
   }
-  memBuf->ub = WORD_BIT;
+  memBuf->ub = WORD_32BIT;
   memBuf->word = 0;
   memBuf->pdu = pdu;
   return memBuf;
@@ -71,7 +71,7 @@ unsigned long int decode(packedDecode *memBuf, int bitlen) {
   } else if (lb == 0) {
     /* once we get this we hit the boundary so incr word count */
     n = getn(memBuf, bitlen, lb);
-    memBuf->ub = WORD_BIT;
+    memBuf->ub = WORD_32BIT;
     memBuf->word++;
   } else {
     /* our value crossed a boundary lb < 0 */
@@ -80,9 +80,9 @@ unsigned long int decode(packedDecode *memBuf, int bitlen) {
     lhs = lb + bitlen;
     n1 = getn(memBuf, lhs, 0);
     rhs = bitlen - lhs;
-    memBuf->ub = WORD_BIT;
+    memBuf->ub = WORD_32BIT;
     memBuf->word++;
-    lb = WORD_BIT - rhs;
+    lb = WORD_32BIT - rhs;
     n2 = getn(memBuf, rhs, lb);
     n = ((n1 << rhs) | n2);
     memBuf->ub = lb;

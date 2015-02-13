@@ -84,7 +84,7 @@ packedEncode *initializeEncode(char *pdu, int size) {
     alert("Failed to allocate memory during initialisation.");
     return NULL;
   }
-  if ((memBuf->buf = calloc(WORD_BIT, WORD_BYTE)) == NULL) {
+  if ((memBuf->buf = calloc(WORD_32BIT, WORD_BYTE)) == NULL) {
     alert("Failed to allocate memory during initialisation.");
     return NULL;    
   }
@@ -112,7 +112,7 @@ int finalizeEncode(packedEncode *memBuf) {
     int buffree;
     word = orBuf(memBuf);
     addWord(memBuf, word);
-    buffree = (WORD_BIT - memBuf->bitsUsed) / CHAR_BIT;
+    buffree = (WORD_32BIT - memBuf->bitsUsed) / CHAR_BIT;
     bufused = WORD_BYTE - buffree;
     memBuf->pduWords--;
   }
@@ -138,7 +138,7 @@ static void addBuf(packedEncode *memBuf, unsigned long int n) {
   int offset;
   
   /* make sure is big endian */
-  word = htonl(n << (WORD_BIT - memBuf->bitsUsed));
+  word = htonl(n << (WORD_32BIT - memBuf->bitsUsed));
   
   offset = ((memBuf->bufWords) * WORD_BYTE);
   memcpy((memBuf->buf)+offset, &word, WORD_BYTE);
@@ -187,18 +187,18 @@ void encode(packedEncode *memBuf, unsigned long int n, int bitlength) {
     
   memBuf->bitsUsed = memBuf->bitsUsed + bitlength;
   
-  if (memBuf->bitsUsed == WORD_BIT) { /* lucky fit */
+  if (memBuf->bitsUsed == WORD_32BIT) { /* lucky fit */
     addBuf(memBuf, n);
     word = orBuf(memBuf);
     addWord(memBuf, word);
     resetBuf(memBuf);
-  } else if (memBuf->bitsUsed < WORD_BIT) { /* some room */
+  } else if (memBuf->bitsUsed < WORD_32BIT) { /* some room */
     addBuf(memBuf, n);
-  } else { /* exceeded space available, ie. memBuf->bitsUsed > WORD_BIT */
+  } else { /* exceeded space available, ie. memBuf->bitsUsed > WORD_32BIT */
     int tail;
-    tail = (memBuf->bitsUsed - WORD_BIT);		
+    tail = (memBuf->bitsUsed - WORD_32BIT);		
     /* set the word to be full */
-    memBuf->bitsUsed = WORD_BIT;
+    memBuf->bitsUsed = WORD_32BIT;
     /* remove the tail so we just add the head into the gap */
     addBuf(memBuf, (n >> tail));
     word = orBuf(memBuf);

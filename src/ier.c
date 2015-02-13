@@ -18,7 +18,7 @@
 #include "config.h"
 #include "ier.h"
 
-#define WORD_BIT 32
+#define WORD_32BIT 32
 #define WORD_BYTE 4
 #define EIGHT_BIT 8
 #define SEVEN_BIT 7

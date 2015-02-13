@@ -1,7 +1,7 @@
 #ifndef ENCODE_H_
 #define ENCODE_H_
 
-#define WORD_BIT 32
+#define WORD_32BIT 32
 #define WORD_BYTE 4
 
 
