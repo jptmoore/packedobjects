@@ -132,14 +132,14 @@ if [ $# -eq 0 ]
 then
     init
     clearFile
-    exit 1
+    exit 0
 elif [ $# -eq 2 ]
 then
     if [ -f $argfile ]
     then
 	init $2
 	clearFile $2
-	exit 1
+	exit 0
     elif [ ! -f $argfile ]
     then 
 	echo "file does not exist"
