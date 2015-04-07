@@ -1,0 +1,7 @@
+git clone https://github.com/jptmoore/packedobjects.git
+cd packedobjects
+autoreconf -i
+./configure
+make
+make check
+sudo make install
