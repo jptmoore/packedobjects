@@ -71,12 +71,19 @@
     </xs:restriction>
   </xs:simpleType>
   
-  <xs:simpleType name="unix-time">
-    <xs:restriction base="xs:string">
-      <xs:pattern value="(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])(T| )([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9])([-+]((0[0-9]|1[0-3]):([03]0|45)|14:00)|Z)"/>
+  <xs:simpleType name="epoch">
+    <xs:restriction base="xs:dateTime">
+      <xs:minInclusive value="1901-12-13T20:45:53Z"/>
+      <xs:maxInclusive value="2038-01-19T03:14:07Z"/>
     </xs:restriction>
   </xs:simpleType>
-
+  
+  <xs:simpleType name="unix-time">
+    <xs:restriction base="epoch">
+      <xs:pattern value="(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T([0-1][0-9]|[2][0-3]):([0-5][0-9]):([0-5][0-9])([-+]((0[0-9]|1[0-3]):([03]0|45)|14:00)|Z)"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
   <xs:simpleType name="utf8-string">
     <xs:restriction base="xs:string">
     </xs:restriction>
