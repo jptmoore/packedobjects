@@ -73,7 +73,7 @@
   
   <xs:simpleType name="epoch">
     <xs:restriction base="xs:dateTime">
-      <xs:minInclusive value="1901-12-13T20:45:53Z"/>
+      <xs:minInclusive value="1901-12-13T20:45:52Z"/>
       <xs:maxInclusive value="2038-01-19T03:14:07Z"/>
     </xs:restriction>
   </xs:simpleType>
