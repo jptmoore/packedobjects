@@ -186,6 +186,27 @@ char *packedobjects_encode(packedobjectsContext *pc, xmlDocPtr doc)
   return pdu;
 }
 
+char *packedobjects_encode_with_string(packedobjectsContext *pc, const char *xml) {
+
+  char *pdu = NULL;
+  xmlDocPtr doc = NULL;
+
+  if ((doc = xmlParseMemory(xml, strlen(xml))) == NULL) {
+    alert("Failed to parse XML string.");
+    return NULL;
+  }
+
+  pdu = packedobjects_encode(pc, doc);
+  if (pc->encode_error) {
+    alert("Failed to encode with error %d.", pc->encode_error);
+  }
+
+  xmlFree(doc);
+
+  return pdu;
+
+}
+
 void packedobjects_validate_encode(packedobjectsContext *poCtxPtr, xmlDocPtr doc)
 {
   int result;
