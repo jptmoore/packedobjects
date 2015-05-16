@@ -7,6 +7,6 @@
 xmlDocPtr packedobjects_decode(packedobjectsContext *pc, char *pdu);
 
 // convenience function
-unsigned char *packedobjects_decode_to_string(packedobjectsContext *pc, char *pdu);
+char *packedobjects_decode_to_string(packedobjectsContext *pc, char *pdu);
 
 #endif

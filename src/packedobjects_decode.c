@@ -574,7 +574,7 @@ xmlDocPtr packedobjects_decode(packedobjectsContext *pc, char *pdu)
   return doc_data;
 }
 
-unsigned char *packedobjects_decode_to_string(packedobjectsContext *pc, char *pdu) {
+char *packedobjects_decode_to_string(packedobjectsContext *pc, char *pdu) {
 
   xmlDocPtr doc = NULL;
   xmlChar *xml = NULL;
