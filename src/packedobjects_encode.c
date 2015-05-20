@@ -201,7 +201,7 @@ char *packedobjects_encode_with_string(packedobjectsContext *pc, const char *xml
     alert("Failed to encode with error %d.", pc->encode_error);
   }
 
-  xmlFree(doc);
+  xmlFreeDoc(doc);
 
   return pdu;
 
