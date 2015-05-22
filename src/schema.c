@@ -1,4 +1,8 @@
 #include <unistd.h>
+#ifdef __APPLE__
+#include "TargetConditionals.h"
+#include <CoreFoundation/CoreFoundation.h>
+#endif
 #include "schema.h"
 
 #ifdef DEBUG_MODE
@@ -16,6 +20,10 @@
 #endif
 
 static const char *schema_rules_file();
+#ifdef __APPLE__
+static const char *schema_rules_file_ios();
+static char *CFStringCopyUTF8String(CFStringRef aString);
+#endif
 
 static schemaData *compile_schema(xmlDoc *schema)
 {
@@ -78,21 +86,64 @@ void schema_free_validation(packedobjectsContext *pc)
   
 }
 
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+static char *CFStringCopyUTF8String(CFStringRef aString) {
+    if (aString == NULL) {
+        return NULL;
+    }
+    
+    CFIndex length = CFStringGetLength(aString);
+    CFIndex maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
+    char *buffer = (char *)malloc(maxSize);
+    if (CFStringGetCString(aString, buffer, maxSize, kCFStringEncodingUTF8)) {
+        return buffer;
+    }
+    return NULL;
+}
+
+static const char *schema_rules_file_ios()
+{
+    CFBundleRef mainBundle = CFBundleGetMainBundle();
+    if( mainBundle == NULL ) {
+        alert("unable to get main bundle");
+    }
+    CFURLRef dataFileURL = CFBundleCopyResourceURL(mainBundle, CFSTR("packedobjectsSchemaTypes"), CFSTR("xsd"), NULL);
+    if( dataFileURL == NULL ) {
+        alert("unable to locate packedobjectsSchemaTypes.xsd");
+    }
+    CFStringRef path;
+    if( !CFURLCopyResourcePropertyForKey(dataFileURL, kCFURLPathKey, &path, NULL)) {
+        alert("unable to get file path");
+    }
+    char *pathBuffer = CFStringCopyUTF8String(path);
+    return(pathBuffer); // needs to be freed
+}
+#endif
+
 static int validate_schema_rules(xmlDocPtr doc)
 {
   xmlDocPtr doc_schemarules = NULL;
   schemaData *schemarulesp = NULL;
   const char *fname = NULL;
-
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+  if ((fname = schema_rules_file_ios()) == NULL) {
+    alert("failed to find schema rules.");
+    return 1;
+  }
+#else
   if ((fname = schema_rules_file()) == NULL) {
     alert("failed to find schema rules.");
     return 1;
   }
-
+#endif
   if ((doc_schemarules = packedobjects_new_doc(fname)) == NULL) {
     alert("Failed to create doc.");  
     return 1;
   }
+#if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
+  free((char *)fname);
+#endif
+    
   if ((schemarulesp = compile_schema(doc_schemarules)) == NULL) {
     alert("Failed to preprocess schema.");
     xmlFreeDoc(doc_schemarules);
